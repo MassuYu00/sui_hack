@@ -2,8 +2,12 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { WalletButton } from '@/components/wallet-button'
+import { useAuth } from '@/lib/auth-context'
 
 export default function Navigation() {
+  const { isAuthenticated } = useAuth()
+
   return (
     <nav className="border-b border-border bg-card sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,25 +24,39 @@ export default function Navigation() {
 
           {/* Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#fighters" className="text-foreground hover:text-primary transition">
-              選手一覧
+            <Link href="/#fighters" className="text-foreground hover:text-primary transition">
+              投資先
             </Link>
-            <Link href="#how-it-works" className="text-foreground hover:text-primary transition">
-              仕組み
+            <Link href="/#documentaries" className="text-foreground hover:text-primary transition">
+              ドキュメンタリー
             </Link>
-            <Link href="#features" className="text-foreground hover:text-primary transition">
-              特徴
+            <Link href="/scout" className="text-foreground hover:text-primary transition">
+              スカウト
+            </Link>
+            <Link href="/badges" className="text-foreground hover:text-primary transition">
+              マイバッジ
             </Link>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link href="/login">ログイン</Link>
-            </Button>
-            <Button className="bg-primary hover:bg-accent text-primary-foreground" asChild>
-              <Link href="/login?action=signup">はじめる</Link>
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <WalletButton />
+                <Button variant="ghost" asChild>
+                  <Link href="/dashboard">ダッシュボード</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/login">ログイン</Link>
+                </Button>
+                <Button className="bg-primary hover:bg-accent text-primary-foreground" asChild>
+                  <Link href="/login?action=signup">はじめる</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

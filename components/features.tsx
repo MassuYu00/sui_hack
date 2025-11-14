@@ -1,33 +1,33 @@
 export default function Features() {
   const features = [
     {
-      title: 'zkLogin Integration',
-      description: 'Sign in with Google or X. No wallet creation needed. Web3 is seamless.',
+      title: 'zkLoginでシームレス参加',
+      description: 'Web3の知識不要。GoogleやX(Twitter)アカウントだけで、ウォレット作成なしにDAOに参加できます。',
       icon: '🔐',
     },
     {
-      title: 'Dual Returns',
-      description: 'Earn financial returns from athlete ISA contracts + exclusive NFT badges.',
-      icon: '💰',
+      title: '投資持分NFT',
+      description: '投資額と選手IDが記録されたComposable NFT。賞金の一部を自動分配する「権利証」そのもの。',
+      icon: '💎',
     },
     {
-      title: 'Transparent Investment',
-      description: 'All contracts on Sui blockchain. Real-time funding tracking and fighter stats.',
+      title: 'Winning Second SBT',
+      description: '支援選手が勝利した瞬間を記録する譲渡不可能なバッジ。「俺が育てた」という究極の当事者意識の証明。',
+      icon: '🏆',
+    },
+    {
+      title: 'ISA契約による透明な分配',
+      description: '所得分配契約（ISA）に基づき、選手の賞金の一部（例: 30%）を5年間、投資家に自動分配。',
       icon: '📊',
     },
     {
-      title: 'Community Governance',
-      description: 'Vote on fighter selection, events, and platform decisions with your NFT.',
-      icon: '🗳️',
-    },
-    {
-      title: 'Exclusive Content',
-      description: 'Access behind-the-scenes documentaries and training footage.',
+      title: '限定ドキュメンタリー',
+      description: 'メディア企業としての本命ビジネス。投資家限定で、選手の海外修行ドキュメンタリーを視聴可能。',
       icon: '🎬',
     },
     {
-      title: 'Scout Rewards',
-      description: 'Discover athletes before the platform. Earn Scout SBT for recommendations.',
+      title: 'スカウト報酬',
+      description: '才能ある選手を推薦し、資金調達成功時に総額の3%を報酬として受領。Scout Master SBTも発行。',
       icon: '⭐',
     },
   ]
@@ -37,10 +37,10 @@ export default function Features() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Why FIGHTER'S RISING
+            FIGHTER'S RISING の特徴
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            The first platform that makes athlete investment accessible, transparent, and rewarding.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            選手・ファン・メディア繋ぐ、新しいコミュニティ
           </p>
         </div>
 
@@ -52,7 +52,7 @@ export default function Features() {
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
               <h3 className="text-lg font-bold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
+              <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>

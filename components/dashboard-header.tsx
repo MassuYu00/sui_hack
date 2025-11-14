@@ -1,6 +1,7 @@
 'use client'
 
 import { UserMenu } from './user-menu'
+import { WalletButton } from './wallet-button'
 import Link from 'next/link'
 import { Bell, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,6 +14,7 @@ export function DashboardHeader() {
           FIGHTER'S RISING
         </Link>
         <div className="flex items-center gap-4">
+          <WalletButton />
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
           </Button>

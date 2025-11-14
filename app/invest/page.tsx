@@ -2,19 +2,30 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { DashboardHeader } from '@/components/dashboard-header'
+import { useAuth } from '@/lib/auth-context'
+import DashboardNav from '@/components/dashboard-nav'
 import { FighterCard } from '@/components/fighter-card'
 import { FilterSidebar } from '@/components/filter-sidebar'
-import { useAuth } from '@/lib/auth-context'
 import { Input } from '@/components/ui/input'
-import { Search } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Search, Wallet, Shield, TrendingUp, Award } from 'lucide-react'
+import { mockFighters } from '@/lib/mock-data'
 
 export default function InvestPage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<{ sports: string[], fundingRange: number[], minRating: number }>({ sports: [], fundingRange: [0, 10000], minRating: 0 })
+  const [filters, setFilters] = useState<{ 
+    sports: string[]
+    fundingRange: number[]
+    minRating: number 
+  }>({ 
+    sports: [], 
+    fundingRange: [0, 100000], 
+    minRating: 0 
+  })
 
   useEffect(() => {
     setIsClient(true)
@@ -22,117 +33,24 @@ export default function InvestPage() {
 
   useEffect(() => {
     if (isClient && !isAuthenticated) {
-      router.push('/login')
+      router.push('/login?redirect=/invest')
     }
   }, [isAuthenticated, isClient, router])
 
-  const allFighters = [
-    {
-      id: '1',
-      name: 'Alex Chen',
-      sport: 'MMA',
-      rating: 4.8,
-      growth: '+15%',
-      fundingGoal: 5000,
-      fundingCurrent: 3200,
-      investors: 45,
-      description: 'UFC prospect with impressive record',
-    },
-    {
-      id: '2',
-      name: 'Jordan Martinez',
-      sport: 'Boxing',
-      rating: 4.6,
-      growth: '+12%',
-      fundingGoal: 4000,
-      fundingCurrent: 2100,
-      investors: 32,
-      description: 'Champion contender in heavyweight division',
-    },
-    {
-      id: '3',
-      name: 'Sam Williams',
-      sport: 'Wrestling',
-      rating: 4.9,
-      growth: '+22%',
-      fundingGoal: 6000,
-      fundingCurrent: 4500,
-      investors: 58,
-      description: 'Olympic-trained wrestler with promising career',
-    },
-    {
-      id: '4',
-      name: 'Taylor Singh',
-      sport: 'Muay Thai',
-      rating: 4.7,
-      growth: '+8%',
-      fundingGoal: 3500,
-      fundingCurrent: 2200,
-      investors: 28,
-      description: 'Rising star in international tournaments',
-    },
-    {
-      id: '5',
-      name: 'Nicole Brooks',
-      sport: 'MMA',
-      rating: 4.5,
-      growth: '+18%',
-      fundingGoal: 5500,
-      fundingCurrent: 3800,
-      investors: 42,
-      description: 'Undefeated rookie with breakthrough potential',
-    },
-    {
-      id: '6',
-      name: 'Marcus Thompson',
-      sport: 'Boxing',
-      rating: 4.8,
-      growth: '+20%',
-      fundingGoal: 4500,
-      fundingCurrent: 3100,
-      investors: 51,
-      description: 'Lightweight champion on championship run',
-    },
-    {
-      id: '7',
-      name: 'Emma Young',
-      sport: 'Judo',
-      rating: 4.9,
-      growth: '+25%',
-      fundingGoal: 5800,
-      fundingCurrent: 4200,
-      investors: 55,
-      description: 'World champion with stellar record',
-    },
-    {
-      id: '8',
-      name: 'Ryan Chang',
-      sport: 'BJJ',
-      rating: 4.4,
-      growth: '+10%',
-      fundingGoal: 3200,
-      fundingCurrent: 1800,
-      investors: 22,
-      description: 'Submission specialist with growing fanbase',
-    },
-  ]
+  const filteredFighters = mockFighters
+    .filter(f => f.currentStatus === 'fundraising') // 資金調達中のみ
+    .filter((fighter) => {
+      const matchesSearch =
+        fighter.nameJa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fighter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fighter.weightClass.toLowerCase().includes(searchTerm.toLowerCase())
 
-  const filteredFighters = allFighters.filter((fighter) => {
-    const matchesSearch =
-      fighter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fighter.sport.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesFunding =
+        fighter.funding.currentAmount >= filters.fundingRange[0] &&
+        fighter.funding.currentAmount <= filters.fundingRange[1]
 
-    const matchesSport =
-      filters.sports.length === 0 || filters.sports.includes(fighter.sport)
-
-    const matchesFunding =
-      fighter.fundingCurrent >= filters.fundingRange[0] &&
-      fighter.fundingCurrent <= filters.fundingRange[1]
-
-    const matchesRating = fighter.rating >= filters.minRating
-
-    return matchesSearch && matchesSport && matchesFunding && matchesRating
-  })
+      return matchesSearch && matchesFunding
+    })
 
   if (!isClient) {
     return null
@@ -140,46 +58,145 @@ export default function InvestPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
-      <main className="container mx-auto px-6 py-8">
-        <div className="space-y-8">
-          <div>
-            <h1 className="text-3xl font-bold">選手を応援する</h1>
-            <p className="text-muted-foreground mt-1">夢を追う選手とつながり、成長を共に見守ろう</p>
+      <DashboardNav title="選手に投資する" />
+      
+      <main className="container mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold mb-4">選手に投資する</h1>
+          <p className="text-xl text-muted-foreground mb-8">
+            プロスペクト選手のエンジェル投資家になり、成功をリターンとして受け取る
+          </p>
+
+          {/* Investment Benefits */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <Card className="border-primary/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Wallet className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="font-semibold">投資持分NFT</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  賞金の一部を自動分配
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Award className="w-5 h-5 text-green-600" />
+                  </div>
+                  <h3 className="font-semibold">Winning Second SBT</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  勝利の瞬間を刻む名誉
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-purple-200">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <h3 className="font-semibold">ドキュメンタリー</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  限定映像へのアクセス
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-orange-200">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-orange-100 rounded-lg">
+                    <Shield className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <h3 className="font-semibold">特典アクセス</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  チケット先行販売など
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div className="lg:col-span-1">
-              <FilterSidebar onFilterChange={setFilters} />
-            </div>
-
-            <div className="lg:col-span-3 space-y-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input
-                  placeholder="選手名、競技で検索..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-
-              <div className="text-sm text-muted-foreground">
-                {filteredFighters.length}名の選手を表示中（全{allFighters.length}名）
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredFighters.map((fighter) => (
-                  <FighterCard key={fighter.id} {...fighter} />
-                ))}
-              </div>
-
-              {filteredFighters.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">条件に合う選手が見つかりませんでした</p>
+          {/* How It Works */}
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="p-6">
+              <h3 className="font-bold text-lg mb-4">投資の仕組み</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <Badge className="mb-2">Step 1</Badge>
+                  <h4 className="font-semibold mb-1">USDsuiで投資</h4>
+                  <p className="text-sm text-muted-foreground">
+                    ステーブルコインで選手に投資。投資持分NFTを受け取る。
+                  </p>
                 </div>
-              )}
+                <div>
+                  <Badge className="mb-2">Step 2</Badge>
+                  <h4 className="font-semibold mb-1">選手が成長</h4>
+                  <p className="text-sm text-muted-foreground">
+                    ISA契約に基づき、運営が選手をサポート。修行ドキュメンタリーを制作。
+                  </p>
+                </div>
+                <div>
+                  <Badge className="mb-2">Step 3</Badge>
+                  <h4 className="font-semibold mb-1">リターン獲得</h4>
+                  <p className="text-sm text-muted-foreground">
+                    賞金の一部を自動分配。勝利時にSBTも発行。
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters and Search */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-1">
+            <FilterSidebar onFilterChange={setFilters} />
+          </div>
+
+          <div className="lg:col-span-3 space-y-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                placeholder="選手名、階級で検索..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                {filteredFighters.length}名の投資先を表示中
+              </div>
+              <Badge variant="outline">資金調達中のみ表示</Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredFighters.map((fighter) => (
+                <FighterCard key={fighter.id} fighter={fighter} />
+              ))}
+            </div>
+
+            {filteredFighters.length === 0 && (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">
+                    現在、資金調達中の選手はいません
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>

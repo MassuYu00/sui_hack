@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -7,12 +8,15 @@ import Link from 'next/link'
 import { Heart, Target, Users } from 'lucide-react'
 import { Fighter } from '@/lib/types'
 import Image from 'next/image'
+import { InvestmentModal } from '@/components/investment-modal'
 
 interface FighterCardProps {
   fighter: Fighter
 }
 
 export function FighterCard({ fighter }: FighterCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
   if (!fighter) {
     return null
   }
@@ -103,23 +107,31 @@ export function FighterCard({ fighter }: FighterCardProps) {
           </div>
         </div>
 
-        {/* 応援者数 */}
+        {/* 投資家数 */}
         <div className="flex items-center justify-between pt-2 border-t border-border">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
-            <span className="text-sm text-muted-foreground">応援者</span>
+            <span className="text-sm text-muted-foreground">投資家</span>
           </div>
-          <span className="text-lg font-semibold">{fighter.funding.supporterCount}人</span>
+          <span className="text-lg font-semibold">{fighter.funding.investorCount}人</span>
         </div>
 
-        {/* 応援ボタン */}
-        <Button asChild className="w-full group-hover:shadow-lg transition-all" size="lg">
-          <Link href={`/fighter/${fighter.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
-            <Heart className="h-4 w-4 mr-2" />
-            応援する
-          </Link>
+        {/* 投資ボタン */}
+        <Button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-full group-hover:shadow-lg transition-all" 
+          size="lg"
+        >
+          <Heart className="h-4 w-4 mr-2" />
+          投資する
         </Button>
       </CardContent>
+
+      <InvestmentModal 
+        fighter={fighter}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </Card>
   )
 }

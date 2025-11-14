@@ -24,7 +24,7 @@ export const mockFighters: Fighter[] = [
     funding: {
       targetAmount: 15000,
       currentAmount: 8500,
-      supporterCount: 127,
+      investorCount: 127, // 投資家数
     },
     image: '/Gemini_Generated_Image_3j4iq63j4iq63j4i.png',
     listedAt: '2025-01-10T00:00:00Z',
@@ -52,7 +52,7 @@ export const mockFighters: Fighter[] = [
     funding: {
       targetAmount: 20000,
       currentAmount: 20000,
-      supporterCount: 284,
+      investorCount: 284, // 投資家数
     },
     image: '/Gemini_Generated_Image_7ztmku7ztmku7ztm.png',
     listedAt: '2024-11-01T00:00:00Z',
@@ -80,7 +80,7 @@ export const mockFighters: Fighter[] = [
     funding: {
       targetAmount: 22000,
       currentAmount: 22000,
-      supporterCount: 156,
+      investorCount: 156, // 投資家数
     },
     image: '/Gemini_Generated_Image_o4m0txo4m0txo4m0.png',
     listedAt: '2024-10-15T00:00:00Z',
@@ -88,18 +88,18 @@ export const mockFighters: Fighter[] = [
   },
   {
     id: 'fighter-003',
-    name: 'Kenji "The Samurai" Nakamura',
-    nameJa: '中村 健二',
+    name: 'Alex "The Striker" Johnson',
+    nameJa: 'アレックス・ジョンソン',
     age: 27,
-    nationality: 'Japan',
+    nationality: 'USA',
     weightClass: 'Welterweight (77kg)',
     record: {
       wins: 12,
       losses: 3,
       draws: 1,
     },
-    backstory: '元自衛隊員。災害救助活動中の負傷で退官を余儀なくされたが、「人を守る強さ」を求めて格闘技の道へ。国内では実績を積んだが、世界レベルの打撃技術を学ぶ資金がなかった。妻と幼い娘を日本に残し、単身でオランダへ修行に行く覚悟を決めた。',
-    goal: 'オランダでキックボクシングの最高峰技術を学び、RIZIN王者へ',
+    backstory: '元軍人。除隊後、「真の強さ」を求めて格闘技の道へ。国内では実績を積んだが、世界レベルの打撃技術を学ぶ資金がなかった。家族をアメリカに残し、単身でオランダへ修行に行く覚悟を決めた。',
+    goal: 'オランダでキックボクシングの最高峰技術を学び、UFCチャンピオンへ',
     currentStatus: 'fundraising',
     isaContract: {
       percentage: 35,
@@ -108,7 +108,7 @@ export const mockFighters: Fighter[] = [
     funding: {
       targetAmount: 18000,
       currentAmount: 12300,
-      supporterCount: 193,
+      investorCount: 193, // 投資家数
     },
     image: '/Gemini_Generated_Image_esuxdcesuxdcesux.png',
     listedAt: '2025-01-05T00:00:00Z',
@@ -116,18 +116,18 @@ export const mockFighters: Fighter[] = [
   },
   {
     id: 'fighter-005',
-    name: 'Yuki "Ice Queen" Tanaka',
-    nameJa: '田中 優希',
+    name: 'Sophie "The Phoenix" Dubois',
+    nameJa: 'ソフィー・デュボア',
     age: 21,
-    nationality: 'Japan',
+    nationality: 'France',
     weightClass: 'Atomweight (48kg)',
     record: {
       wins: 5,
       losses: 0,
       draws: 0,
     },
-    backstory: '大学生現役ファイター。学費を稼ぐためアルバイトを掛け持ちしながら、大学の格闘技サークルで無敗記録を樹立。「女性が格闘技で生きていける世界を作りたい」という信念を持つ。卒業後のプロデビューに向け、アメリカでの経験が必要だと考えている。',
-    goal: 'アメリカ・カリフォルニアのジムで女子MMAの最先端技術を学び、Invictaデビュー',
+    backstory: 'パリ出身の大学生ファイター。学費を稼ぐためアルバイトを掛け持ちしながら、フランスの格闘技サークルで無敗記録を樹立。「女性が格闘技で生きていける世界を作りたい」という信念を持つ。卒業後のプロデビューに向け、アメリカでの経験が必要だと考えている。',
+    goal: 'アメリカ・カリフォルニアのジムで女子MMAの最先端技術を学び、UFCデビュー',
     currentStatus: 'fundraising',
     isaContract: {
       percentage: 28,
@@ -136,7 +136,7 @@ export const mockFighters: Fighter[] = [
     funding: {
       targetAmount: 16000,
       currentAmount: 4200,
-      supporterCount: 68,
+      investorCount: 68, // 投資家数
     },
     image: '/Gemini_Generated_Image_op39cwop39cwop39.png',
     listedAt: '2025-01-12T00:00:00Z',

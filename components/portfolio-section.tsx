@@ -4,51 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { ArrowRight, Trophy } from 'lucide-react'
+import { ArrowRight, Award, TrendingUp } from 'lucide-react'
+import Image from 'next/image'
+import { useInvestments } from '@/lib/investment-context'
 
 export function PortfolioSection() {
-  const supportedFighters = [
-    {
-      name: 'Alex Chen',
-      nameJa: 'アレックス・チェン',
-      sport: 'MMA',
-      supported: '$2,500',
-      badges: 3,
-      status: 'training',
-      statusLabel: '修行中',
-      lastUpdate: 'タイでの修行開始',
-    },
-    {
-      name: 'Jordan Martinez',
-      nameJa: 'ジョーダン・マルティネス',
-      sport: 'Boxing',
-      supported: '$1,800',
-      badges: 2,
-      status: 'active',
-      statusLabel: '活動中',
-      lastUpdate: '次回試合: 2週間後',
-    },
-    {
-      name: 'Sam Williams',
-      nameJa: 'サム・ウィリアムズ',
-      sport: 'Wrestling',
-      supported: '$3,200',
-      badges: 5,
-      status: 'active',
-      statusLabel: '活動中',
-      lastUpdate: '前回試合: 勝利',
-    },
-    {
-      name: 'Taylor Singh',
-      nameJa: 'テイラー・シン',
-      sport: 'Muay Thai',
-      supported: '$1,950',
-      badges: 1,
-      status: 'fundraising',
-      statusLabel: '資金調達中',
-      lastUpdate: '目標の85%達成',
-    },
-  ]
+  const { investments } = useInvestments()
 
   const statusColors = {
     fundraising: 'bg-blue-500',
@@ -56,44 +17,93 @@ export function PortfolioSection() {
     active: 'bg-green-500',
   }
 
+  const statusLabels = {
+    fundraising: '資金調達中',
+    training: '修行中',
+    active: '活動中',
+  }
+
   return (
     <Card className="border-primary/10">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>応援中の選手</CardTitle>
+        <div>
+          <CardTitle>応援ポートフォリオ</CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            あなたが保有する応援持分NFT
+          </p>
+        </div>
         <Button variant="outline" size="sm" asChild>
           <Link href="/invest">
-            すべて見る <ArrowRight className="ml-2 h-4 w-4" />
+            応援先を探す <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {supportedFighters.map((fighter, index) => (
-            <div key={index} className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition">
-              <div className="space-y-1 flex-1">
-                <p className="font-medium">{fighter.nameJa}</p>
-                <p className="text-sm text-muted-foreground">{fighter.sport}</p>
+          {investments.map((investment) => (
+            <div
+              key={investment.id}
+              className="flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-muted/50 transition cursor-pointer"
+            >
+              {/* 選手画像 */}
+              <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0">
+                <Image
+                  src={investment.fighterImage}
+                  alt={investment.fighterNameJa}
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="flex items-center gap-4">
+
+              {/* 選手情報 */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-medium truncate">{investment.fighterNameJa}</p>
+                  <Badge
+                    className={`${statusColors[investment.fighterStatus]} text-white border-0 shrink-0`}
+                  >
+                    {statusLabels[investment.fighterStatus]}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  応援開始日: {new Date(investment.investedAt).toLocaleDateString('ja-JP')}
+                </p>
+              </div>
+
+              {/* 応援情報 */}
+              <div className="grid grid-cols-3 gap-4 shrink-0">
                 <div className="text-right">
-                  <p className="text-sm font-medium">{fighter.supported}</p>
-                  <p className="text-xs text-muted-foreground">支援金額</p>
+                  <p className="text-xs text-muted-foreground mb-1">応援額</p>
+                  <p className="text-sm font-medium">${investment.amount}</p>
                 </div>
                 <div className="text-right">
+                  <p className="text-xs text-muted-foreground mb-1">持分</p>
                   <div className="flex items-center gap-1 justify-end">
-                    <Trophy className="h-4 w-4 text-yellow-600" />
-                    <p className="text-sm font-medium">{fighter.badges}個</p>
+                    <Award className="h-3 w-3 text-purple-600" />
+                    <p className="text-sm font-medium">{investment.percentage}%</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">バッジ</p>
                 </div>
-                <Badge
-                  className={`${statusColors[fighter.status as keyof typeof statusColors]} text-white border-0 ml-2`}
-                >
-                  {fighter.statusLabel}
-                </Badge>
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground mb-1">リターン</p>
+                  <div className="flex items-center gap-1 justify-end">
+                    <TrendingUp className={`h-3 w-3 ${investment.totalReturnsReceived > 0 ? 'text-green-600' : 'text-gray-400'}`} />
+                    <p className={`text-sm font-medium ${investment.totalReturnsReceived > 0 ? 'text-green-600' : 'text-gray-600'}`}>
+                      ${investment.totalReturnsReceived}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
+
+          {investments.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+              <p className="mb-4">まだ応援している選手はいません</p>
+              <Button asChild>
+                <Link href="/invest">応援先を探す</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

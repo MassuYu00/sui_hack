@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoginButton } from '@/components/login-button'
@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/auth-context'
 export default function LoginPage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -18,9 +19,15 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isClient && isAuthenticated) {
-      router.push('/dashboard')
+      // Check for redirect parameter
+      const redirect = searchParams.get('redirect')
+      if (redirect) {
+        router.push(redirect)
+      } else {
+        router.push('/dashboard')
+      }
     }
-  }, [isAuthenticated, isClient, router])
+  }, [isAuthenticated, isClient, router, searchParams])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted flex items-center justify-center p-4">
