@@ -21,23 +21,23 @@ export default function Navigation() {
           {/* Menu */}
           <div className="hidden md:flex items-center gap-8">
             <Link href="#fighters" className="text-foreground hover:text-primary transition">
-              Fighters
+              選手一覧
             </Link>
             <Link href="#how-it-works" className="text-foreground hover:text-primary transition">
-              How It Works
+              仕組み
             </Link>
             <Link href="#features" className="text-foreground hover:text-primary transition">
-              Features
+              特徴
             </Link>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex items-center gap-3">
             <Button variant="ghost" asChild>
-              <Link href="/login">Sign In</Link>
+              <Link href="/login">ログイン</Link>
             </Button>
             <Button className="bg-primary hover:bg-accent text-primary-foreground" asChild>
-              <Link href="/login?action=signup">Get Started</Link>
+              <Link href="/login?action=signup">はじめる</Link>
             </Button>
           </div>
         </div>

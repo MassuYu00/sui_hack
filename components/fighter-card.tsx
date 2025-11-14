@@ -1,94 +1,122 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { Star, TrendingUp, Users } from 'lucide-react'
+import { Heart, Target, Users } from 'lucide-react'
+import { Fighter } from '@/lib/types'
+import Image from 'next/image'
 
 interface FighterCardProps {
-  id: string
-  name: string
-  sport: string
-  rating: number
-  growth: string
-  fundingGoal: number
-  fundingCurrent: number
-  investors: number
-  description: string
+  fighter: Fighter
 }
 
-export function FighterCard({
-  id,
-  name,
-  sport,
-  rating,
-  growth,
-  fundingGoal,
-  fundingCurrent,
-  investors,
-  description,
-}: FighterCardProps) {
-  const fundingPercent = (fundingCurrent / fundingGoal) * 100
+export function FighterCard({ fighter }: FighterCardProps) {
+  if (!fighter) {
+    return null
+  }
+  
+  const fundingPercent = Math.min(100, (fighter.funding.currentAmount / fighter.funding.targetAmount) * 100)
+  const statusLabels = {
+    fundraising: '資金調達中',
+    training: '修行中',
+    active: '活動中',
+  }
+  const statusColors = {
+    fundraising: 'bg-blue-500',
+    training: 'bg-orange-500',
+    active: 'bg-green-500',
+  }
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition border-primary/10">
-      <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl font-bold text-primary/20">{name.charAt(0)}</div>
-        </div>
-      </div>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="space-y-1">
-            <CardTitle className="text-lg">{name}</CardTitle>
-            <p className="text-sm text-muted-foreground">{sport}</p>
-          </div>
-          <Badge variant="outline" className="gap-1 whitespace-nowrap">
-            <Star className="h-3 w-3 fill-current" />
-            {rating}
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-primary/20 group">
+      {/* 選手画像エリア - ストーリー性を強調 */}
+      <div className="relative h-56 bg-linear-to-br from-primary/30 via-primary/10 to-background overflow-hidden">
+        <Image
+          src={fighter.image}
+          alt={fighter.nameJa}
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
+        <div className="absolute top-4 right-4 z-10">
+          <Badge className={`${statusColors[fighter.currentStatus]} text-white border-0`}>
+            {statusLabels[fighter.currentStatus]}
           </Badge>
         </div>
+        <div className="absolute bottom-4 left-4 right-4 z-10">
+          <h3 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
+            {fighter.nameJa}
+          </h3>
+          <p className="text-sm text-white/90 drop-shadow">{fighter.name}</p>
+        </div>
+      </div>
+
+      <CardHeader className="pb-3 space-y-3">
+        {/* 基本情報 */}
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-4 text-muted-foreground">
+            <span>{fighter.nationality}</span>
+            <span>•</span>
+            <span>{fighter.age}歳</span>
+            <span>•</span>
+            <span>{fighter.weightClass}</span>
+          </div>
+          <Badge variant="outline" className="font-mono">
+            {fighter.record.wins}-{fighter.record.losses}-{fighter.record.draws}
+          </Badge>
+        </div>
+
+        {/* 目標 - 応援したくなる要素 */}
+        <div className="flex gap-2 items-start bg-muted/50 p-3 rounded-lg">
+          <Target className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+          <p className="text-sm leading-relaxed">{fighter.goal}</p>
+        </div>
       </CardHeader>
+
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{description}</p>
-
+        {/* 資金調達進捗 */}
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Funding Goal</span>
-            <span className="font-medium">
-              ${fundingCurrent.toLocaleString()} / ${fundingGoal.toLocaleString()}
-            </span>
+          <div className="flex justify-between items-end">
+            <div>
+              <p className="text-xs text-muted-foreground">調達進捗</p>
+              <p className="text-lg font-bold">
+                ${fighter.funding.currentAmount.toLocaleString()}
+                <span className="text-sm font-normal text-muted-foreground ml-1">
+                  / ${fighter.funding.targetAmount.toLocaleString()}
+                </span>
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-bold text-primary">{Math.round(fundingPercent)}%</p>
+            </div>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
+          <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
             <div
-              className="bg-primary h-2 rounded-full transition-all"
+              className="bg-linear-to-r from-primary to-primary/70 h-3 rounded-full transition-all duration-500 relative overflow-hidden"
               style={{ width: `${Math.min(fundingPercent, 100)}%` }}
-            ></div>
-          </div>
-          <p className="text-xs text-muted-foreground">{Math.round(fundingPercent)}% funded</p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-600" />
-            <div>
-              <p className="text-xs text-muted-foreground">Growth</p>
-              <p className="text-sm font-medium text-green-600">{growth}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-blue-600" />
-            <div>
-              <p className="text-xs text-muted-foreground">Investors</p>
-              <p className="text-sm font-medium">{investors}</p>
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
             </div>
           </div>
         </div>
 
-        <Button asChild className="w-full">
-          <Link href={`/fighter/${name.replace(' ', '-')}`}>
-            View & Invest
+        {/* 応援者数 */}
+        <div className="flex items-center justify-between pt-2 border-t border-border">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" />
+            <span className="text-sm text-muted-foreground">応援者</span>
+          </div>
+          <span className="text-lg font-semibold">{fighter.funding.supporterCount}人</span>
+        </div>
+
+        {/* 応援ボタン */}
+        <Button asChild className="w-full group-hover:shadow-lg transition-all" size="lg">
+          <Link href={`/fighter/${fighter.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+            <Heart className="h-4 w-4 mr-2" />
+            応援する
           </Link>
         </Button>
       </CardContent>

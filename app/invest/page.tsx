@@ -144,8 +144,8 @@ export default function InvestPage() {
       <main className="container mx-auto px-6 py-8">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-bold">Invest in Fighters</h1>
-            <p className="text-muted-foreground mt-1">Discover and support rising athletes</p>
+            <h1 className="text-3xl font-bold">選手を応援する</h1>
+            <p className="text-muted-foreground mt-1">夢を追う選手とつながり、成長を共に見守ろう</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -157,7 +157,7 @@ export default function InvestPage() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
-                  placeholder="Search fighters, sports..."
+                  placeholder="選手名、競技で検索..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -165,7 +165,7 @@ export default function InvestPage() {
               </div>
 
               <div className="text-sm text-muted-foreground">
-                Showing {filteredFighters.length} of {allFighters.length} fighters
+                {filteredFighters.length}名の選手を表示中（全{allFighters.length}名）
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -176,7 +176,7 @@ export default function InvestPage() {
 
               {filteredFighters.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">No fighters match your filters</p>
+                  <p className="text-muted-foreground">条件に合う選手が見つかりませんでした</p>
                 </div>
               )}
             </div>

@@ -1,95 +1,77 @@
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { FighterCard } from '@/components/fighter-card'
+import { mockFighters } from '@/lib/mock-data'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function FightersGrid() {
-  const fighters = [
-    {
-      id: 1,
-      name: 'Alex Chen',
-      weight: 'Lightweight',
-      record: '12-3-0',
-      image: '🥊',
-      goal: 50000,
-      raised: 37500,
-      daysLeft: 12,
-    },
-    {
-      id: 2,
-      name: 'Maria Rodriguez',
-      weight: 'Featherweight',
-      record: '8-1-0',
-      image: '👊',
-      goal: 35000,
-      raised: 28000,
-      daysLeft: 5,
-    },
-    {
-      id: 3,
-      name: 'James Walker',
-      weight: 'Middleweight',
-      record: '15-5-0',
-      image: '🥋',
-      goal: 60000,
-      raised: 42000,
-      daysLeft: 20,
-    },
-  ]
+  const fundraisingFighters = mockFighters.filter(f => f.currentStatus === 'fundraising')
+  const trainingFighters = mockFighters.filter(f => f.currentStatus === 'training')
+  const activeFighters = mockFighters.filter(f => f.currentStatus === 'active')
 
   return (
     <section id="fighters" className="py-20 sm:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16">
+        <div className="mb-16 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Active Fundraisers
+            夢を追う選手たち
           </h2>
-          <p className="text-xl text-muted-foreground">
-            Support rising fighters on their journey to championship glory.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            才能はあるが、資金や人脈で壁にぶつかっている選手を応援しよう。<br/>
+            あなたの応援が、彼らの人生を変える。
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {fighters.map((fighter) => {
-            const progress = (fighter.raised / fighter.goal) * 100
-            return (
-              <Card key={fighter.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center">
-                  <span className="text-6xl">{fighter.image}</span>
-                </div>
+        <Tabs defaultValue="fundraising" className="w-full">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
+            <TabsTrigger value="fundraising">
+              資金調達中 ({fundraisingFighters.length})
+            </TabsTrigger>
+            <TabsTrigger value="training">
+              修行中 ({trainingFighters.length})
+            </TabsTrigger>
+            <TabsTrigger value="active">
+              活動中 ({activeFighters.length})
+            </TabsTrigger>
+          </TabsList>
 
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground">{fighter.name}</h3>
-                    <p className="text-sm text-muted-foreground">{fighter.weight}</p>
-                    <p className="text-sm text-primary font-semibold mt-1">Record: {fighter.record}</p>
-                  </div>
+          <TabsContent value="fundraising" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {fundraisingFighters.map((fighter) => (
+                <FighterCard key={fighter.id} fighter={fighter} />
+              ))}
+            </div>
+            {fundraisingFighters.length === 0 && (
+              <p className="text-center text-muted-foreground py-12">
+                現在、資金調達中の選手はいません
+              </p>
+            )}
+          </TabsContent>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Funding Progress</span>
-                      <span className="font-semibold text-foreground">{Math.round(progress)}%</span>
-                    </div>
-                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      ${fighter.raised.toLocaleString()} of ${fighter.goal.toLocaleString()}
-                    </p>
-                  </div>
+          <TabsContent value="training" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trainingFighters.map((fighter) => (
+                <FighterCard key={fighter.id} fighter={fighter} />
+              ))}
+            </div>
+            {trainingFighters.length === 0 && (
+              <p className="text-center text-muted-foreground py-12">
+                現在、修行中の選手はいません
+              </p>
+            )}
+          </TabsContent>
 
-                  <div className="pt-2 border-t border-border">
-                    <p className="text-sm text-muted-foreground mb-3">{fighter.daysLeft} days left</p>
-                    <Button className="w-full bg-primary hover:bg-accent text-primary-foreground">
-                      Support Fighter
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            )
-          })}
-        </div>
+          <TabsContent value="active" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {activeFighters.map((fighter) => (
+                <FighterCard key={fighter.id} fighter={fighter} />
+              ))}
+            </div>
+            {activeFighters.length === 0 && (
+              <p className="text-center text-muted-foreground py-12">
+                現在、活動中の選手はいません
+              </p>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   )

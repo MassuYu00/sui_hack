@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -18,12 +18,16 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
 
   const sportOptions = ['MMA', 'Boxing', 'Wrestling', 'Muay Thai', 'Judo', 'BJJ']
 
+  // フィルターが変更されたときに親に通知（レンダリング後に実行）
+  useEffect(() => {
+    onFilterChange({ sports, fundingRange, minRating })
+  }, [sports, fundingRange, minRating])
+
   const handleSportChange = (sport: string) => {
     setSports((prev) => {
       const updated = prev.includes(sport)
         ? prev.filter((s) => s !== sport)
         : [...prev, sport]
-      onFilterChange({ sports: updated, fundingRange, minRating })
       return updated
     })
   }
@@ -31,11 +35,11 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   return (
     <Card className="h-fit border-primary/10">
       <CardHeader>
-        <CardTitle className="text-lg">Filters</CardTitle>
+        <CardTitle className="text-lg">絞り込み</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Sport</Label>
+          <Label className="text-sm font-medium">競技</Label>
           {sportOptions.map((sport) => (
             <div key={sport} className="flex items-center gap-2">
               <Checkbox
@@ -52,7 +56,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
 
         <div className="space-y-3">
           <Label className="text-sm font-medium">
-            Funding: ${fundingRange[0].toLocaleString()} - ${fundingRange[1].toLocaleString()}
+            支援金額: ${fundingRange[0].toLocaleString()} - ${fundingRange[1].toLocaleString()}
           </Label>
           <Slider
             min={0}
@@ -61,14 +65,13 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             value={fundingRange}
             onValueChange={(value) => {
               setFundingRange(value as [number, number])
-              onFilterChange({ sports, fundingRange: value, minRating })
             }}
             className="w-full"
           />
         </div>
 
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Minimum Rating: {minRating.toFixed(1)}</Label>
+          <Label className="text-sm font-medium">最低人気度: {minRating.toFixed(1)}</Label>
           <Slider
             min={0}
             max={5}
@@ -76,7 +79,6 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             value={[minRating]}
             onValueChange={(value) => {
               setMinRating(value[0])
-              onFilterChange({ sports, fundingRange, minRating: value[0] })
             }}
             className="w-full"
           />
@@ -89,10 +91,9 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             setSports([])
             setFundingRange([0, 10000])
             setMinRating(0)
-            onFilterChange({ sports: [], fundingRange: [0, 10000], minRating: 0 })
           }}
         >
-          Clear Filters
+          絞り込みをクリア
         </Button>
       </CardContent>
     </Card>

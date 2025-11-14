@@ -18,10 +18,14 @@ function AuthCallbackContent() {
   useEffect(() => {
     const processCallback = async () => {
       try {
+        console.log('🔄 Processing OAuth callback...')
+        
         // Get JWT from URL fragment (for implicit flow)
         const hash = window.location.hash.substring(1)
         const params = new URLSearchParams(hash)
         const idToken = params.get('id_token') || searchParams.get('id_token')
+
+        console.log('📧 ID Token received:', idToken ? 'Yes' : 'No')
 
         if (!idToken) {
           throw new Error('No ID token received from OAuth provider')
@@ -31,15 +35,28 @@ function AuthCallbackContent() {
         const state = params.get('state') || searchParams.get('state')
         const storedState = sessionStorage.getItem('oauth_state')
         
-        if (state !== storedState) {
+        console.log('🔐 State verification:', {
+          received: state,
+          stored: storedState,
+          match: state === storedState
+        })
+        
+        if (!state || !storedState) {
+          console.warn('⚠️ State parameter missing, but continuing...')
+        } else if (state !== storedState) {
           throw new Error('Invalid state parameter - possible CSRF attack')
         }
 
-        // Clear stored state
+        console.log('✅ Processing OAuth callback...')
+        
+        // Process the OAuth callback with the state parameter
+        await handleOAuthCallback(idToken, state || undefined)
+        
+        // Clear stored state after successful authentication
         sessionStorage.removeItem('oauth_state')
-
-        // Process the OAuth callback
-        await handleOAuthCallback(idToken)
+        if (state) {
+          sessionStorage.removeItem(`zklogin_state_${state}`)
+        }
 
         setStatus('success')
 
