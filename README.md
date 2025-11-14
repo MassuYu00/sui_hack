@@ -2,6 +2,12 @@
 
 Fan-backed athlete investment platform powered by Sui blockchain. Support rising fighters, earn returns, and build community.
 
+## 🎯 Quick Links
+
+- **[🚀 Quick Start Guide](./QUICKSTART.md)** - Get running in 5 minutes!
+- **[🔐 ZKLogin Setup](./ZKLOGIN_SETUP.md)** - OAuth configuration guide
+- **[💻 Development Guide](./DEVELOPMENT.md)** - Comprehensive dev documentation
+
 ## 🚀 Features
 
 - **ZKLogin Authentication**: Seamless login with Google/Facebook using Sui's ZKLogin technology
@@ -28,35 +34,18 @@ Fan-backed athlete investment platform powered by Sui blockchain. Support rising
 
 ## 🔧 Installation
 
-1. Clone the repository:
+**Quick Start (with Mock Authentication):**
 
 ```bash
 git clone https://github.com/MassuYu00/sui_hack.git
 cd sui_hack
-```
-
-2. Install dependencies:
-
-```bash
 npm install --legacy-peer-deps
+npm run dev
 ```
 
-3. Set up environment variables:
+That's it! Open [http://localhost:3000](http://localhost:3000) and start testing with mock authentication.
 
-```bash
-cp .env.example .env.local
-```
-
-4. Configure your `.env.local` file with OAuth credentials:
-
-```bash
-# See ZKLOGIN_SETUP.md for detailed instructions
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
-NEXT_PUBLIC_FACEBOOK_CLIENT_ID=your-facebook-app-id
-NEXT_PUBLIC_USER_SALT=your-secure-random-salt
-```
-
-See [ZKLOGIN_SETUP.md](./ZKLOGIN_SETUP.md) for complete setup instructions.
+**For detailed setup with real OAuth**, see [QUICKSTART.md](./QUICKSTART.md).
 
 ## 🚀 Getting Started
 
