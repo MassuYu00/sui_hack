@@ -215,9 +215,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = () => {
+    console.log('🚪 Logging out...')
+    
+    // Clear all session data
     clearSessionWithNotification()
     clearZKLoginState()
+    
+    // Update local state
     setSession(null)
+    
+    // Redirect to home page
+    if (typeof window !== 'undefined') {
+      // Clear any cached data from window
+      sessionStorage.clear()
+      
+      console.log('✅ Logout successful')
+      
+      // Redirect to home
+      window.location.href = '/'
+    }
   }
 
   return (

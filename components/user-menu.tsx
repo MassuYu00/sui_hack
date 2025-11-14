@@ -62,7 +62,14 @@ export function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} className="cursor-pointer">
+        <DropdownMenuItem 
+          onClick={() => {
+            if (confirm('ログアウトしてもよろしいですか？')) {
+              logout()
+            }
+          }} 
+          className="cursor-pointer text-destructive focus:text-destructive"
+        >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </DropdownMenuItem>

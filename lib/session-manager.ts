@@ -50,6 +50,11 @@ export function saveSession(data: SessionData): void {
     
     // Also store a simpler version in sessionStorage for quick access
     sessionStorage.setItem('zklogin_active', 'true')
+    
+    // Clear logout flag when saving new session
+    localStorage.removeItem('zklogin_logged_out')
+    
+    console.log('✅ Session saved successfully')
   } catch (error) {
     console.error('Failed to save session:', error)
   }
@@ -60,6 +65,18 @@ export function loadSession(): SessionData | null {
   if (typeof window === 'undefined') return null
 
   try {
+    // Check if user explicitly logged out
+    const loggedOut = localStorage.getItem('zklogin_logged_out')
+    if (loggedOut) {
+      const logoutTime = parseInt(loggedOut)
+      // Clear logout flag after 5 minutes to allow fresh login
+      if (Date.now() - logoutTime < 5 * 60 * 1000) {
+        return null
+      } else {
+        localStorage.removeItem('zklogin_logged_out')
+      }
+    }
+
     const encoded = localStorage.getItem(SESSION_KEY)
     if (!encoded) return null
 
@@ -79,13 +96,24 @@ export function loadSession(): SessionData | null {
   }
 }
 
-// Clear session
+// Clear session - Complete invalidation
 export function clearSession(): void {
   if (typeof window === 'undefined') return
 
+  // Remove all session-related data
   localStorage.removeItem(SESSION_KEY)
   sessionStorage.removeItem('zklogin_active')
   sessionStorage.removeItem('zklogin_state')
+  sessionStorage.removeItem('oauth_state')
+  sessionStorage.removeItem('oauth_provider')
+  
+  // Clear any cached data
+  sessionStorage.clear()
+  
+  // Mark session as explicitly logged out
+  localStorage.setItem('zklogin_logged_out', Date.now().toString())
+  
+  console.log('✅ Session cleared completely')
 }
 
 // Check if session is valid

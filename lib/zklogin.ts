@@ -1,5 +1,6 @@
-import { generateNonce, generateRandomness, jwtToAddress } from '@mysten/sui/zklogin'
+import { generateNonce, generateRandomness, jwtToAddress, getExtendedEphemeralPublicKey } from '@mysten/sui/zklogin'
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519'
+import { genAddressSeed, getZkLoginSignature } from '@mysten/sui/zklogin'
 
 // OAuth Configuration
 export interface OAuthConfig {
@@ -13,6 +14,14 @@ export interface ZKLoginState {
   randomness: string
   maxEpoch: number
   ephemeralKeyPair: Ed25519Keypair
+}
+
+export interface ZKProofResponse {
+  proof: string
+  inputs: {
+    addressSeed: string
+    [key: string]: any
+  }
 }
 
 // Generate ephemeral key pair and nonce
@@ -81,6 +90,21 @@ export async function getSuiAddressFromJWT(
   userSalt: string
 ): Promise<string> {
   try {
+    // Parse JWT to get subject
+    const decodedJWT = parseJWT(jwt)
+    if (!decodedJWT || !decodedJWT.sub) {
+      throw new Error('Invalid JWT: missing subject')
+    }
+
+    // Generate address seed
+    const addressSeed = genAddressSeed(
+      BigInt(userSalt),
+      'sub', // key claim name
+      decodedJWT.sub,
+      decodedJWT.aud as string
+    )
+
+    // Compute ZKLogin address
     const address = jwtToAddress(jwt, userSalt)
     return address
   } catch (error) {
@@ -96,33 +120,63 @@ export async function generateZKProof(
   randomness: string,
   maxEpoch: number,
   userSalt: string
-): Promise<any> {
+): Promise<ZKProofResponse> {
   try {
-    // In production, this would call Mysten's ZK proof generation service
-    // https://prover.mystenlabs.com/v1
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_PROVER_URL || 'https://prover-dev.mystenlabs.com/v1',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jwt,
-          extendedEphemeralPublicKey: ephemeralKeyPair.getPublicKey().toSuiBytes(),
-          maxEpoch,
-          jwtRandomness: randomness,
-          salt: userSalt,
-          keyClaimName: 'sub',
-        }),
-      }
-    )
-
-    if (!response.ok) {
-      throw new Error('Failed to generate ZK proof')
+    const decodedJWT = parseJWT(jwt)
+    if (!decodedJWT) {
+      throw new Error('Failed to decode JWT')
     }
 
-    return await response.json()
+    // Get extended ephemeral public key
+    const extendedEphemeralPublicKey = getExtendedEphemeralPublicKey(
+      ephemeralKeyPair.getPublicKey()
+    )
+
+    // Prepare the payload for prover service
+    const payload = {
+      jwt,
+      extendedEphemeralPublicKey: Array.from(extendedEphemeralPublicKey),
+      maxEpoch: maxEpoch.toString(),
+      jwtRandomness: randomness,
+      salt: userSalt,
+      keyClaimName: 'sub',
+    }
+
+    console.log('Requesting ZK proof from prover service...')
+    
+    const proverUrl = process.env.NEXT_PUBLIC_PROVER_URL || 'https://prover-dev.mystenlabs.com/v1'
+    
+    const response = await fetch(proverUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Prover service error:', errorText)
+      throw new Error(`Failed to generate ZK proof: ${response.status} ${errorText}`)
+    }
+
+    const proofData = await response.json()
+    
+    // Generate address seed for verification
+    const addressSeed = genAddressSeed(
+      BigInt(userSalt),
+      'sub',
+      decodedJWT.sub,
+      decodedJWT.aud as string
+    ).toString()
+
+    return {
+      proof: proofData,
+      inputs: {
+        addressSeed,
+        ...proofData,
+      },
+    }
   } catch (error) {
     console.error('Failed to generate ZK proof:', error)
     throw error
@@ -174,26 +228,14 @@ export function clearZKLoginState(): void {
 // Get current epoch from Sui network
 export async function getCurrentEpoch(): Promise<number> {
   try {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_SUI_RPC_URL || 'https://fullnode.devnet.sui.io:443',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'suix_getLatestSuiSystemState',
-          params: [],
-        }),
-      }
-    )
-
-    const data = await response.json()
-    return parseInt(data.result.epoch)
+    // Import dynamically to avoid circular dependency
+    const { getSuiClient } = await import('./sui-client')
+    const client = getSuiClient()
+    const systemState = await client.getLatestSuiSystemState()
+    return Number(systemState.epoch)
   } catch (error) {
     console.error('Failed to get current epoch:', error)
-    return 0
+    // Return a reasonable default for development
+    return 100
   }
 }
