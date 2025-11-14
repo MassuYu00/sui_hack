@@ -1,36 +1,36 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendingUp, Users, Award, Wallet } from 'lucide-react'
+import { Heart, Users, Trophy, Flame } from 'lucide-react'
 
 export function DashboardStats() {
   const stats = [
     {
-      title: 'Total Investments',
-      value: '$12,450.00',
-      change: '+12.5%',
-      icon: TrendingUp,
+      title: '応援中の選手',
+      value: '8人',
+      change: '今月+2人',
+      icon: Users,
       color: 'text-blue-600',
     },
     {
-      title: 'Fighters Following',
-      value: '8',
-      change: '+2 this month',
-      icon: Users,
-      color: 'text-green-600',
+      title: '総支援金額',
+      value: '$12,450',
+      change: '+12.5%',
+      icon: Heart,
+      color: 'text-red-600',
     },
     {
-      title: 'Returns Generated',
-      value: '$1,287.50',
-      change: '+8.2%',
-      icon: Award,
-      color: 'text-purple-600',
+      title: '保有バッジ',
+      value: '15個',
+      change: 'Winning Second: 5個',
+      icon: Trophy,
+      color: 'text-yellow-600',
     },
     {
-      title: 'Wallet Balance',
-      value: '$5,120.75',
-      change: 'Connected',
-      icon: Wallet,
+      title: 'コミュニティ貢献度',
+      value: 'レベル 4',
+      change: '次のレベルまで 1,200pt',
+      icon: Flame,
       color: 'text-orange-600',
     },
   ]

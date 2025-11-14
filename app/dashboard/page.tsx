@@ -35,15 +35,11 @@ export default function DashboardPage() {
       <DashboardHeader />
       <main className="container mx-auto px-6 py-8">
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Welcome back!</h1>
-              <p className="text-muted-foreground mt-1">Manage your fighter investments and portfolio</p>
-            </div>
+          <div className="flex items-center justify-end">
             <Button asChild className="gap-2">
               <Link href="/invest">
                 <Plus className="h-4 w-4" />
-                New Investment
+                新しい選手を応援
               </Link>
             </Button>
           </div>
