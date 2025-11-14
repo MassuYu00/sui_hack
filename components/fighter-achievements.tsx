@@ -7,7 +7,7 @@ import { Trophy, Medal, Award } from 'lucide-react'
 interface Achievement {
   title: string
   date: string
-  type: 'championship' | 'tournament' | 'milestone'
+  type: 'championship' | 'tournament' | 'milestone' | 'award'
 }
 
 interface FighterAchievementsProps {
@@ -21,6 +21,8 @@ export function FighterAchievements({ achievements }: FighterAchievementsProps) 
         return <Trophy className="h-5 w-5 text-yellow-600" />
       case 'tournament':
         return <Medal className="h-5 w-5 text-blue-600" />
+      case 'award':
+        return <Award className="h-5 w-5 text-green-600" />
       case 'milestone':
         return <Award className="h-5 w-5 text-purple-600" />
       default:

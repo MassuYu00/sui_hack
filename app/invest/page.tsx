@@ -14,7 +14,7 @@ export default function InvestPage() {
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState({ sports: [], fundingRange: [0, 10000], minRating: 0 })
+  const [filters, setFilters] = useState<{ sports: string[], fundingRange: number[], minRating: number }>({ sports: [], fundingRange: [0, 10000], minRating: 0 })
 
   useEffect(() => {
     setIsClient(true)

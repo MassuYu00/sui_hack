@@ -14,7 +14,7 @@ export function LoginButton({ variant = 'default', size = 'default' }: LoginButt
   const { login, isLoading } = useAuth()
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null)
 
-  const handleLogin = async (provider: string) => {
+  const handleLogin = async (provider: 'google' | 'facebook') => {
     setSelectedProvider(provider)
     await login(provider)
   }

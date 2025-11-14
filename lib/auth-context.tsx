@@ -1,6 +1,28 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import {
+  generateZKLoginState,
+  getOAuthUrl,
+  parseJWT,
+  getSuiAddressFromJWT,
+  generateZKProof,
+  storeZKLoginState,
+  retrieveZKLoginState,
+  clearZKLoginState,
+  getCurrentEpoch,
+  type OAuthConfig,
+  type ZKLoginState,
+} from './zklogin'
+import {
+  loadSession,
+  clearSessionWithNotification,
+  createSession,
+  startSessionMonitoring,
+  addSessionListener,
+  isSessionValid,
+  type SessionData,
+} from './session-manager'
 
 interface ZKLoginSession {
   address: string
@@ -12,49 +34,160 @@ interface ZKLoginSession {
 interface AuthContextType {
   session: ZKLoginSession | null
   isLoading: boolean
-  login: (provider: string) => Promise<void>
+  login: (provider: 'google' | 'facebook') => Promise<void>
   logout: () => void
   isAuthenticated: boolean
+  handleOAuthCallback: (jwt: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<ZKLoginSession | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Check for existing session on mount
+  // Load session on mount
   useEffect(() => {
-    const stored = localStorage.getItem('zklogin_session')
-    if (stored) {
-      try {
-        setSession(JSON.parse(stored))
-      } catch (e) {
-        localStorage.removeItem('zklogin_session')
+    const storedSession = loadSession()
+    if (storedSession && isSessionValid()) {
+      setSession({
+        address: storedSession.address,
+        userEmail: storedSession.userEmail,
+        provider: storedSession.provider,
+        createdAt: storedSession.createdAt,
+      })
+    }
+    setIsLoading(false)
+
+    // Start session monitoring
+    const stopMonitoring = startSessionMonitoring()
+
+    // Listen for session events
+    const removeListener = addSessionListener((type) => {
+      if (type === 'expired' || type === 'cleared') {
+        setSession(null)
       }
+    })
+
+    return () => {
+      stopMonitoring()
+      removeListener()
     }
   }, [])
 
-  const login = async (provider: string) => {
+  const getOAuthConfig = (provider: 'google' | 'facebook'): OAuthConfig => {
+    const redirectUri = typeof window !== 'undefined' 
+      ? `${window.location.origin}/auth/callback`
+      : 'http://localhost:3000/auth/callback'
+
+    return {
+      clientId: provider === 'google'
+        ? process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
+        : process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID || '',
+      redirectUri,
+      provider,
+    }
+  }
+
+  const login = async (provider: 'google' | 'facebook') => {
     setIsLoading(true)
     try {
-      // ZKLogin flow simulation - in production, this would integrate with actual Sui ZKLogin
-      const mockSession: ZKLoginSession = {
-        address: `0x${Math.random().toString(16).slice(2)}`,
-        userEmail: 'user@example.com',
-        provider,
-        createdAt: Date.now(),
+      // Get current epoch from Sui network
+      const currentEpoch = await getCurrentEpoch()
+      const maxEpoch = currentEpoch + 10 // Valid for 10 epochs
+
+      // Generate ZKLogin state
+      const zkLoginState = generateZKLoginState(maxEpoch)
+      
+      // Store state for callback
+      storeZKLoginState(zkLoginState)
+
+      // Get OAuth config
+      const config = getOAuthConfig(provider)
+
+      // Generate state parameter for CSRF protection
+      const state = Math.random().toString(36).substring(7)
+      sessionStorage.setItem('oauth_state', state)
+
+      // Redirect to OAuth provider
+      const authUrl = getOAuthUrl(config, zkLoginState.nonce, state)
+      window.location.href = authUrl
+    } catch (error) {
+      console.error('Login failed:', error)
+      setIsLoading(false)
+      throw error
+    }
+  }
+
+  const handleOAuthCallback = async (jwt: string) => {
+    setIsLoading(true)
+    try {
+      // Retrieve stored ZKLogin state
+      const zkLoginState = retrieveZKLoginState()
+      if (!zkLoginState) {
+        throw new Error('No ZKLogin state found')
       }
-      setSession(mockSession)
-      localStorage.setItem('zklogin_session', JSON.stringify(mockSession))
+
+      // Parse JWT to get user info
+      const jwtPayload = parseJWT(jwt)
+      if (!jwtPayload) {
+        throw new Error('Invalid JWT')
+      }
+
+      // Generate user salt (in production, this should be derived securely)
+      const userSalt = process.env.NEXT_PUBLIC_USER_SALT || 'default-salt'
+
+      // Get Sui address from JWT
+      const address = await getSuiAddressFromJWT(jwt, userSalt)
+
+      // Generate ZK proof
+      const zkProof = await generateZKProof(
+        jwt,
+        zkLoginState.ephemeralKeyPair,
+        zkLoginState.randomness,
+        zkLoginState.maxEpoch,
+        userSalt
+      )
+
+      // Extract user email from JWT
+      const userEmail = jwtPayload.email || jwtPayload.sub || 'unknown@example.com'
+      const provider = jwtPayload.iss?.includes('google') ? 'google' : 'facebook'
+
+      // Create session
+      const sessionData = createSession(
+        address,
+        userEmail,
+        provider,
+        jwt,
+        zkProof,
+        zkLoginState.ephemeralKeyPair,
+        zkLoginState.randomness,
+        zkLoginState.maxEpoch
+      )
+
+      // Update state
+      setSession({
+        address: sessionData.address,
+        userEmail: sessionData.userEmail,
+        provider: sessionData.provider,
+        createdAt: sessionData.createdAt,
+      })
+
+      // Clear ZKLogin state
+      clearZKLoginState()
+    } catch (error) {
+      console.error('OAuth callback failed:', error)
+      clearZKLoginState()
+      throw error
     } finally {
       setIsLoading(false)
     }
   }
 
   const logout = () => {
+    clearSessionWithNotification()
+    clearZKLoginState()
     setSession(null)
-    localStorage.removeItem('zklogin_session')
   }
 
   return (
@@ -65,6 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         isAuthenticated: !!session,
+        handleOAuthCallback,
       }}
     >
       {children}
