@@ -21,8 +21,10 @@ import {
   startSessionMonitoring,
   addSessionListener,
   isSessionValid,
+  saveSession,
   type SessionData,
 } from './session-manager'
+import { MOCK_MODE, mockLogin, getMockSession, isOAuthConfigured } from './mock-auth'
 
 interface ZKLoginSession {
   address: string
@@ -92,6 +94,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (provider: 'google' | 'facebook') => {
     setIsLoading(true)
     try {
+      // Check if we should use mock mode
+      const useMockMode = MOCK_MODE || !isOAuthConfigured()
+      
+      if (useMockMode) {
+        console.log('🧪 Using mock authentication mode')
+        
+        // Simulate OAuth delay
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        
+        // Get mock session data
+        const mockSession = getMockSession(provider)
+        
+        // Save session
+        saveSession(mockSession)
+        
+        // Update state
+        setSession({
+          address: mockSession.address,
+          userEmail: mockSession.userEmail,
+          provider: mockSession.provider,
+          createdAt: mockSession.createdAt,
+        })
+        
+        setIsLoading(false)
+        return
+      }
+
+      // Real OAuth flow
       // Get current epoch from Sui network
       const currentEpoch = await getCurrentEpoch()
       const maxEpoch = currentEpoch + 10 // Valid for 10 epochs
