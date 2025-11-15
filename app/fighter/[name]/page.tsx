@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { InvestmentModal } from '@/components/investment-modal'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Heart, Users, Target, Calendar, Trophy, TrendingUp, DollarSign } from 'lucide-react'
@@ -16,6 +17,7 @@ export default function FighterProfilePage({ params }: { params: { name: string 
   const { isAuthenticated } = useAuth()
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
+  const [showInvestModal, setShowInvestModal] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -204,7 +206,12 @@ export default function FighterProfilePage({ params }: { params: { name: string 
                   </div>
 
                   {/* 応援ボタン */}
-                  <Button className="w-full" size="lg" disabled={fighter.currentStatus !== 'fundraising'}>
+                  <Button 
+                    className="w-full" 
+                    size="lg" 
+                    disabled={fighter.currentStatus !== 'fundraising'}
+                    onClick={() => setShowInvestModal(true)}
+                  >
                     <Heart className="h-5 w-5 mr-2" />
                     {fighter.currentStatus === 'fundraising' ? '応援する' : '応援受付終了'}
                   </Button>
@@ -231,6 +238,15 @@ export default function FighterProfilePage({ params }: { params: { name: string 
           </div>
         </div>
       </main>
+
+      {/* 投資モーダル */}
+      {fighter && (
+        <InvestmentModal
+          fighter={fighter}
+          isOpen={showInvestModal}
+          onClose={() => setShowInvestModal(false)}
+        />
+      )}
     </div>
   )
 }

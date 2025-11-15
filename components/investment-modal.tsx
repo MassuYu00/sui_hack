@@ -10,6 +10,8 @@ import { Fighter } from '@/lib/types'
 import { Loader2, Wallet, TrendingUp, Award, CheckCircle2, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import { useInvestments } from '@/lib/investment-context'
+import { useWallet } from '@/lib/wallet-context'
+import { investInFighter } from '@/lib/sui-client'
 
 interface InvestmentModalProps {
   fighter: Fighter
@@ -19,13 +21,16 @@ interface InvestmentModalProps {
 
 export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalProps) {
   const { addInvestment } = useInvestments()
+  const { keypair, isConnected, address } = useWallet()
   const [amount, setAmount] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [nftDetails, setNftDetails] = useState<{
     nftId: string
     sharePercentage: number
     investmentAmount: number
+    txDigest?: string
   } | null>(null)
 
   const minInvestment = 100
@@ -52,35 +57,56 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
       return
     }
 
+    // ウォレット接続チェック
+    if (!isConnected || !keypair || !address) {
+      setError('ウォレットを接続してください')
+      return
+    }
+
     setIsProcessing(true)
+    setError(null)
 
     try {
-      // TODO: 実際のSuiブロックチェーン処理
-      // 1. ユーザーのウォレットから資金を転送
-      // 2. Fighter Dynamic NFTの currentAmount を更新
-      // 3. Investment Share NFT を mint してユーザーに送付
+      // 実際のSuiブロックチェーン処理
+      // TODO: fighter.idを実際のFighter Object IDに置き換える必要があります
+      const fighterId = process.env.NEXT_PUBLIC_PLATFORM_ID || fighter.id
       
-      // モック処理（3秒待機）
-      await new Promise(resolve => setTimeout(resolve, 3000))
+      console.log('🚀 投資トランザクション開始...')
+      console.log('Fighter ID:', fighterId)
+      console.log('投資額:', numAmount, 'SUI')
+      
+      const result = await investInFighter(
+        keypair,
+        fighterId,
+        numAmount
+      )
+
+      if (!result.success) {
+        throw new Error('トランザクションが失敗しました')
+      }
+
+      console.log('✅ 投資成功!')
+      console.log('NFT ID:', result.nftId)
+      console.log('Transaction:', result.digest)
 
       // NFT発行成功
-      const nftId = `0x${Math.random().toString(16).substr(2, 40)}`
       const sharePercentage = parseFloat(calculateShare(numAmount))
       
       setNftDetails({
-        nftId,
+        nftId: result.nftId || `0x${Math.random().toString(16).substr(2, 40)}`,
         sharePercentage,
         investmentAmount: numAmount,
+        txDigest: result.digest,
       })
 
       // 投資コンテキストに追加
       addInvestment({
-        id: nftId,
+        id: result.nftId || `temp-${Date.now()}`,
         fighterId: fighter.id,
         fighterName: fighter.name,
         fighterNameJa: fighter.nameJa,
         fighterImage: fighter.image,
-        investorAddress: '0x...',
+        investorAddress: address,
         amount: numAmount,
         percentage: sharePercentage,
         investedAt: new Date().toISOString(),
@@ -96,9 +122,9 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
       })
       
       setIsSuccess(true)
-    } catch (error) {
-      console.error('Investment failed:', error)
-      alert('投資処理に失敗しました。もう一度お試しください。')
+    } catch (error: any) {
+      console.error('❌ 投資失敗:', error)
+      setError(error.message || '投資処理に失敗しました。もう一度お試しください。')
     } finally {
       setIsProcessing(false)
     }
@@ -112,8 +138,12 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
   }
 
   const handleViewNFT = () => {
-    // TODO: NFT詳細ページへ遷移
-    window.open(`https://suiscan.xyz/testnet/object/${nftDetails?.nftId}`, '_blank')
+    const network = process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet'
+    if (nftDetails?.txDigest) {
+      window.open(`https://suiscan.xyz/${network}/tx/${nftDetails.txDigest}`, '_blank')
+    } else if (nftDetails?.nftId) {
+      window.open(`https://suiscan.xyz/${network}/object/${nftDetails.nftId}`, '_blank')
+    }
   }
 
   // 投資成功画面
@@ -282,6 +312,24 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
             </div>
           )}
 
+          {/* ウォレット接続チェック */}
+          {!isConnected && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-xs text-blue-900">
+                <strong>ウォレット未接続:</strong> 投資するにはウォレットを接続してください。
+              </p>
+            </div>
+          )}
+
+          {/* エラー表示 */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-xs text-red-900">
+                <strong>エラー:</strong> {error}
+              </p>
+            </div>
+          )}
+
           {/* 注意事項 */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
             <p className="text-xs text-amber-900">
@@ -296,7 +344,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
           </Button>
           <Button
             onClick={handleInvest}
-            disabled={numAmount < minInvestment || numAmount > maxInvestment || isProcessing}
+            disabled={!isConnected || numAmount < minInvestment || numAmount > maxInvestment || isProcessing}
             className="min-w-[120px]"
           >
             {isProcessing ? (
@@ -304,6 +352,8 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 処理中...
               </>
+            ) : !isConnected ? (
+              'ウォレット未接続'
             ) : (
               <>
                 <Wallet className="h-4 w-4 mr-2" />

@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, Award, CheckCircle2, ExternalLink, AlertCircle } from 'lucide-react'
 import { useScout } from '@/lib/scout-context'
+import { useWallet } from '@/lib/wallet-context'
+import { submitScoutProposal } from '@/lib/sui-client'
 
 interface ScoutModalProps {
   isOpen: boolean
@@ -15,9 +17,12 @@ interface ScoutModalProps {
 
 export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
   const { addProposal } = useScout()
+  const { keypair, isConnected, address } = useWallet()
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [proposalId, setProposalId] = useState<string | null>(null)
+  const [txDigest, setTxDigest] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     fighterName: '',
@@ -36,6 +41,12 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // ウォレット接続チェック
+    if (!isConnected || !keypair || !address) {
+      setError('ウォレットを接続してください')
+      return
+    }
+
     if (formData.stakeAmount < minStake || formData.stakeAmount > maxStake) {
       alert(`ステーク額は${minStake}〜${maxStake} USDsuiの範囲で設定してください`)
       return
@@ -47,26 +58,36 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
     }
 
     setIsProcessing(true)
+    setError(null)
 
     try {
-      // TODO: 実際のSuiブロックチェーン処理
-      // 1. ユーザーのウォレットからステーク額をロック
-      // 2. Scout Proposal をオンチェーンに記録
+      // 実際のSuiブロックチェーン処理
+      console.log('🚀 スカウト提案トランザクション開始...')
+      console.log('提案内容:', formData)
       
-      // モック処理（2秒待機）
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const result = await submitScoutProposal(keypair, formData)
 
-      const proposalId = await addProposal({
+      if (!result.success) {
+        throw new Error('トランザクションが失敗しました')
+      }
+
+      console.log('✅ 提案送信成功!')
+      console.log('Proposal ID:', result.proposalId)
+      console.log('Transaction:', result.digest)
+
+      // コンテキストに追加
+      const localProposalId = await addProposal({
         ...formData,
-        proposerAddress: '0x...',
+        proposerAddress: address,
         proposerName: 'あなた',
       })
 
-      setProposalId(proposalId)
+      setProposalId(result.proposalId || localProposalId)
+      setTxDigest(result.digest || null)
       setIsSuccess(true)
-    } catch (error) {
-      console.error('Scout proposal failed:', error)
-      alert('推薦の送信に失敗しました。もう一度お試しください。')
+    } catch (error: any) {
+      console.error('❌ 提案送信失敗:', error)
+      setError(error.message || '推薦の送信に失敗しました。もう一度お試しください。')
     } finally {
       setIsProcessing(false)
     }
@@ -85,6 +106,8 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
     })
     setIsSuccess(false)
     setProposalId(null)
+    setTxDigest(null)
+    setError(null)
     onClose()
   }
 
@@ -158,10 +181,22 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button onClick={handleClose} className="w-full">
+          <DialogFooter className="gap-2">
+            <Button onClick={handleClose} variant="outline" className="flex-1">
               閉じる
             </Button>
+            {txDigest && (
+              <Button
+                onClick={() => {
+                  const network = process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet'
+                  window.open(`https://suiscan.xyz/${network}/tx/${txDigest}`, '_blank')
+                }}
+                className="flex-1"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                トランザクションを表示
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -291,6 +326,24 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
             </p>
           </div>
 
+          {/* ウォレット接続チェック */}
+          {!isConnected && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-xs text-blue-900">
+                <strong>ウォレット未接続:</strong> 提案を送信するにはウォレットを接続してください。
+              </p>
+            </div>
+          )}
+
+          {/* エラー表示 */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-xs text-red-900">
+                <strong>エラー:</strong> {error}
+              </p>
+            </div>
+          )}
+
           <DialogFooter className="gap-2">
             <Button
               type="button"
@@ -302,7 +355,7 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
             </Button>
             <Button
               type="submit"
-              disabled={isProcessing}
+              disabled={!isConnected || isProcessing}
               className="min-w-[120px]"
             >
               {isProcessing ? (
@@ -310,6 +363,8 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   送信中...
                 </>
+              ) : !isConnected ? (
+                'ウォレット未接続'
               ) : (
                 '推薦を送信'
               )}

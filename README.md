@@ -5,6 +5,7 @@ Fan-backed athlete investment platform powered by Sui blockchain. Support rising
 ## 🎯 Quick Links
 
 - **[🚀 Quick Start Guide](./QUICKSTART.md)** - Get running in 5 minutes!
+- **[⛓️ Blockchain Setup](./BLOCKCHAIN_SETUP.md)** - **NEW!** Deploy smart contracts to Sui
 - **[🔐 ZKLogin Setup](./ZKLOGIN_SETUP.md)** - OAuth configuration guide
 - **[💻 Development Guide](./DEVELOPMENT.md)** - Comprehensive dev documentation
 
@@ -21,16 +22,18 @@ Fan-backed athlete investment platform powered by Sui blockchain. Support rising
 
 - **Frontend**: Next.js 16, React 19, TypeScript
 - **Styling**: Tailwind CSS 4, shadcn/ui
-- **Blockchain**: Sui Network
+- **Blockchain**: Sui Network, Move Smart Contracts
+- **SDK**: @mysten/sui v1.45.0
 - **Authentication**: ZKLogin (OAuth + Zero-Knowledge Proofs)
 - **State Management**: React Context API
 
 ## 📋 Prerequisites
 
 - Node.js 18+ and npm
-- Google OAuth credentials (for Google login)
-- Facebook App credentials (for Facebook login)
-- Sui wallet (for blockchain interactions)
+- **Rust** (for deploying smart contracts)
+- **Sui CLI** (for blockchain deployment)
+- Google OAuth credentials (for Google login, optional for testing)
+- Facebook App credentials (for Facebook login, optional for testing)
 
 ## 🔧 Installation
 
@@ -46,6 +49,8 @@ npm run dev
 That's it! Open [http://localhost:3000](http://localhost:3000) and start testing with mock authentication.
 
 **For detailed setup with real OAuth**, see [QUICKSTART.md](./QUICKSTART.md).
+
+**For blockchain deployment**, see [BLOCKCHAIN_SETUP.md](./BLOCKCHAIN_SETUP.md).
 
 ## 🚀 Getting Started
 
@@ -79,46 +84,62 @@ This guide covers:
 ```
 sui_hack/
 ├── app/                      # Next.js app directory
+│   ├── admin/               # Admin dashboard for proposals
+│   │   └── rewards/         # Reward distribution
 │   ├── auth/
 │   │   └── callback/        # OAuth callback handler
 │   ├── dashboard/           # User dashboard
 │   ├── fighter/[name]/      # Fighter profile pages
 │   ├── invest/              # Investment marketplace
 │   ├── login/               # Login page
+│   ├── scout/               # Scout proposal submission
+│   ├── badges/              # SBT collection
 │   └── wallet/              # Wallet management
 ├── components/              # React components
 │   ├── ui/                  # shadcn/ui components
 │   └── ...                  # Feature components
 ├── lib/                     # Utility libraries
 │   ├── zklogin.ts          # ZKLogin integration
+│   ├── sui-client.ts       # Sui blockchain client
 │   ├── session-manager.ts  # Session management
-│   └── auth-context.tsx    # Authentication context
+│   ├── auth-context.tsx    # Authentication context
+│   ├── scout-context.tsx   # Scout proposal context
+│   └── investment-context.tsx # Investment context
+├── move/                    # **NEW!** Sui Move smart contracts
+│   ├── sources/
+│   │   └── fighters_rising.move
+│   ├── Move.toml
+│   ├── deploy.sh            # Deployment script
+│   └── README.md
 ├── public/                  # Static assets
 └── ...
 ```
 
 ## 🔑 Key Features
 
-### ZKLogin Authentication
+### ⛓️ Blockchain Integration (NEW!)
+
+- **Move Smart Contracts**: Fully on-chain logic for transparency
+- **Scout Proposals**: Decentralized athlete discovery mechanism
+- **Investment Shares**: Tradable NFTs representing ownership
+- **Soul Bound Tokens**: Non-transferable achievement badges
+- **Automated Distribution**: Smart contract-based reward distribution
+- **Admin Dashboard**: Proposal review and management system
+
+### 🔐 ZKLogin Authentication
 
 - **Seamless OAuth**: Login with Google or Facebook
 - **Zero-Knowledge Proofs**: Privacy-preserving authentication
 - **Sui Address Generation**: Automatic wallet creation
 - **Session Management**: Secure 24-hour sessions with auto-refresh
 
-### Session Management
-
-- **Encrypted Storage**: Secure session data storage
-- **Auto-Refresh**: Sessions auto-refresh within 2 hours of expiry
-- **Event Listeners**: React to session changes in real-time
-- **CSRF Protection**: State parameter verification
-
-### Investment Platform
+### 💼 Investment Platform
 
 - **Fighter Discovery**: Browse and search athletes
 - **Advanced Filtering**: Filter by sport, rating, funding
 - **Investment Tracking**: Monitor your portfolio performance
 - **Real-time Stats**: Live funding progress and statistics
+- **Portfolio Dashboard**: Track all your investments in one place
 
 ## 🔒 Security Features
 

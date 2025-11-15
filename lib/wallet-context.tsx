@@ -28,9 +28,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     const savedPrivateKey = localStorage.getItem('sui_private_key')
     if (savedPrivateKey) {
       try {
-        const kp = Ed25519Keypair.fromSecretKey(
-          Uint8Array.from(JSON.parse(savedPrivateKey))
-        )
+        // 32バイトの秘密鍵から復元
+        const privateKeyArray = Uint8Array.from(JSON.parse(savedPrivateKey))
+        const kp = Ed25519Keypair.fromSecretKey(privateKeyArray)
         setKeypair(kp)
         const addr = kp.getPublicKey().toSuiAddress()
         setAddress(addr)
@@ -56,7 +56,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const newAddress = newKeypair.getPublicKey().toSuiAddress()
 
       // プライベートキーをローカルストレージに保存（本番環境では推奨されない）
-      const privateKey = newKeypair.getSecretKey()
+      // getSecretKey()は64バイト返すが、最初の32バイトだけを保存
+      const secretKey = newKeypair.getSecretKey()
+      const privateKey = secretKey.slice(0, 32)
       localStorage.setItem('sui_private_key', JSON.stringify(Array.from(privateKey)))
 
       setKeypair(newKeypair)

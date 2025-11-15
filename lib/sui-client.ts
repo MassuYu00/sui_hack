@@ -6,12 +6,15 @@ import { Transaction } from '@mysten/sui/transactions'
 
 // Initialize Sui client
 export function getSuiClient(): SuiClient {
-  const rpcUrl = process.env.NEXT_PUBLIC_SUI_RPC_URL || 'https://fullnode.devnet.sui.io:443'
+  const network = process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet'
+  const rpcUrl = network === 'testnet' 
+    ? 'https://fullnode.testnet.sui.io:443'
+    : 'https://fullnode.devnet.sui.io:443'
   return new SuiClient({ url: rpcUrl })
 }
 
 // パッケージIDとモジュール名（デプロイ後に設定）
-export const PACKAGE_ID = process.env.NEXT_PUBLIC_PACKAGE_ID || '0x0000000000000000000000000000000000000000000000000000000000000000'
+export const PACKAGE_ID = process.env.NEXT_PUBLIC_SUI_PACKAGE_ID || '0x0000000000000000000000000000000000000000000000000000000000000000'
 export const MODULE_NAME = 'fighters_rising'
 
 // オブジェクトタイプ
