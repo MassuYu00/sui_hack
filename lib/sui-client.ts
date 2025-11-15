@@ -254,30 +254,75 @@ export async function createFighter(
 
 /**
  * 投資を実行してInvestment Share NFTを発行
+ * 
+ * モックモード: 決済部分をスキップして、NFTのみを発行します
+ * - 実際のSUI決済は行いません（ブロックチェーンでは0.01 SUIのみガス代として使用）
+ * - InvestmentShare NFTはブロックチェーン上に実際に作成されます
+ * - NFTは投資家のウォレットに転送されます
+ * 
+ * 注意: モックモードでは環境変数のSUI_PRIVATE_KEYを使用します
  */
 export async function investInFighter(
   signer: Ed25519Keypair,
   fighterId: string,
   amount: number
-): Promise<{ success: boolean; nftId?: string; digest?: string }> {
+): Promise<{ success: boolean; nftId?: string; digest?: string; error?: string }> {
   try {
     const client = getSuiClient()
     const tx = new Transaction()
+    
+    // モックモードでは環境変数から秘密鍵を取得
+    let actualSigner = signer
+    const mockPrivateKey = process.env.SUI_PRIVATE_KEY
+    
+    if (mockPrivateKey) {
+      console.log('🔑 モックモード: 環境変数の秘密鍵を使用')
+      try {
+        // 秘密鍵をデコード（Base64エンコードされた32バイトの秘密鍵）
+        const secretKeyBytes = Uint8Array.from(Buffer.from(mockPrivateKey, 'hex'))
+        actualSigner = Ed25519Keypair.fromSecretKey(secretKeyBytes)
+        console.log('✅ ウォレットアドレス:', actualSigner.toSuiAddress())
+      } catch (err) {
+        console.error('❌ 秘密鍵の読み込みに失敗:', err)
+      }
+    }
 
-    // USDsuiコインを分割（実際にはステーブルコインのオブジェクトIDが必要）
-    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount * 1_000_000)])
+    const investor = actualSigner.toSuiAddress()
 
-    // 投資を実行
+    console.log('🎯 モック投資開始:', {
+      fighter: fighterId,
+      amount: amount,
+      investor: investor,
+    })
+
+    // InvestmentShare NFTを直接作成（決済なしバージョン）
+    // 注: これは開発/デモ用のモック実装です
+    const shareData = {
+      fighter_id: fighterId,
+      fighter_name: getFighterName(fighterId), // モックデータから取得
+      investor: investor,
+      amount: amount,
+      percentage: calculatePercentage(fighterId, amount), // 持分計算
+      invested_at: Date.now(),
+      total_returns_received: 0,
+    }
+
+    // ブロックチェーン上にNFTを作成
+    // 注: 実際のMoveコントラクトに対応する関数が必要です
+    // ここでは簡易的にメタデータをトランザクションに含めます
     tx.moveCall({
-      target: `${PACKAGE_ID}::${MODULE_NAME}::invest`,
+      target: `${PACKAGE_ID}::${MODULE_NAME}::mint_investment_share_mock`,
       arguments: [
-        tx.object(fighterId), // Fighter オブジェクト
-        coin, // 投資額（USDsuiコイン）
+        tx.pure.string(shareData.fighter_name),
+        tx.pure.u64(shareData.amount * 1_000_000_000), // MIST単位
+        tx.pure.u64(shareData.percentage),
+        tx.pure.u64(shareData.invested_at),
+        tx.object('0x6'), // Clock オブジェクト
       ],
     })
 
     const result = await client.signAndExecuteTransaction({
-      signer,
+      signer: actualSigner,
       transaction: tx,
       options: {
         showEffects: true,
@@ -285,7 +330,9 @@ export async function investInFighter(
       },
     })
 
-    // 新しく作成されたInvestmentShare NFTのIDを取得
+    console.log('✅ トランザクション成功:', result.digest)
+
+    // 作成されたNFTのIDを取得
     const createdObjects = result.objectChanges?.filter(
       (change) => change.type === 'created'
     )
@@ -293,15 +340,47 @@ export async function investInFighter(
       obj.objectType?.includes('InvestmentShare')
     )
 
+    if (investmentShareNft && 'objectId' in investmentShareNft) {
+      console.log('🎉 NFT発行成功:', investmentShareNft.objectId)
+      return {
+        success: true,
+        nftId: investmentShareNft.objectId,
+        digest: result.digest,
+      }
+    }
+
     return {
       success: true,
-      nftId: investmentShareNft && 'objectId' in investmentShareNft ? investmentShareNft.objectId : undefined,
       digest: result.digest,
     }
   } catch (error) {
-    console.error('Failed to invest in fighter:', error)
-    return { success: false }
+    console.error('❌ 投資失敗:', error)
+    return { 
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
   }
+}
+
+// ヘルパー関数: 選手名を取得
+function getFighterName(fighterId: string): string {
+  const fighterMap: Record<string, string> = {
+    'fighter-001': '山田剛',
+    'fighter-002': 'マリア・ロドリゲス',
+    'fighter-003': 'カルロス・メンデス',
+    'fighter-004': 'ノン・サエンチャイ',
+    'fighter-005': '田中雪',
+    'fighter-006': 'バトゥ・ハビボフ',
+  }
+  return fighterMap[fighterId] || '不明な選手'
+}
+
+// ヘルパー関数: 持分パーセンテージを計算
+function calculatePercentage(fighterId: string, amount: number): number {
+  // 仮の資金調達目標: 100 SUI
+  const fundingGoal = 100
+  // basis points (0.01%単位) で計算
+  return Math.floor((amount / fundingGoal) * 10000)
 }
 
 /**

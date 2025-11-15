@@ -202,7 +202,7 @@ export default function FighterProfilePage({ params }: { params: { name: string 
                       <Users className="h-5 w-5 text-primary" />
                       <span className="text-sm text-muted-foreground">応援者</span>
                     </div>
-                    <span className="text-xl font-bold">{fighter.funding.supporterCount}人</span>
+                    <span className="text-xl font-bold">{fighter.funding.investorCount}人</span>
                   </div>
 
                   {/* 応援ボタン */}

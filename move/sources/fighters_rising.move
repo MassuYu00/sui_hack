@@ -34,7 +34,7 @@ module fighters_rising::fighters_rising {
     
     const MINIMUM_INVESTMENT: u64 = 100_000_000_000; // 100 SUI
     const MAXIMUM_INVESTMENT: u64 = 10_000_000_000_000; // 10,000 SUI
-    const MINIMUM_STAKE: u64 = 100_000_000_000; // 100 SUI
+    const MINIMUM_STAKE: u64 = 1_000_000_000; // 1 SUI (テスト用)
     const SCOUT_REWARD_PERCENTAGE: u64 = 3; // 3%
     const PLATFORM_FEE_PERCENTAGE: u64 = 5; // 5%
     const FIGHTER_SHARE_PERCENTAGE: u64 = 15; // 15%
@@ -436,6 +436,44 @@ module fighters_rising::fighters_rising {
         // イベント発行
         event::emit(InvestmentMade {
             fighter_id: object::id(fighter),
+            investor,
+            amount,
+            share_id,
+        });
+
+        // NFTを投資家に転送
+        transfer::public_transfer(share, investor);
+    }
+
+    /// モック用：決済なしでInvestment Share NFTのみを発行
+    /// 開発/デモ目的で、決済をスキップしてNFTを発行します
+    public entry fun mint_investment_share_mock(
+        fighter_name: String,
+        amount: u64,
+        percentage: u64,
+        invested_at: u64,
+        _clock: &Clock,
+        ctx: &mut TxContext
+    ) {
+        let investor = tx_context::sender(ctx);
+
+        // Investment Share NFTを作成
+        let share = InvestmentShare {
+            id: object::new(ctx),
+            fighter_id: object::id_from_address(@0x1), // モック用のダミーID
+            fighter_name,
+            investor,
+            amount,
+            percentage,
+            invested_at,
+            total_returns_received: 0,
+        };
+
+        let share_id = object::id(&share);
+
+        // イベント発行（モック）
+        event::emit(InvestmentMade {
+            fighter_id: object::id_from_address(@0x1),
             investor,
             amount,
             share_id,

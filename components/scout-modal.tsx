@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, Award, CheckCircle2, ExternalLink, AlertCircle } from 'lucide-react'
 import { useScout } from '@/lib/scout-context'
-import { useWallet } from '@/lib/wallet-context'
-import { submitScoutProposal } from '@/lib/sui-client'
+import { submitScoutProposalAction } from '@/app/actions/scout-mock'
 
 interface ScoutModalProps {
   isOpen: boolean
@@ -17,7 +16,6 @@ interface ScoutModalProps {
 
 export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
   const { addProposal } = useScout()
-  const { keypair, isConnected, address } = useWallet()
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,12 +39,6 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // ウォレット接続チェック
-    if (!isConnected || !keypair || !address) {
-      setError('ウォレットを接続してください')
-      return
-    }
-
     if (formData.stakeAmount < minStake || formData.stakeAmount > maxStake) {
       alert(`ステーク額は${minStake}〜${maxStake} USDsuiの範囲で設定してください`)
       return
@@ -61,29 +53,28 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
     setError(null)
 
     try {
-      // 実際のSuiブロックチェーン処理
+      // サーバーサイドでスカウト提案を提出
       console.log('🚀 スカウト提案トランザクション開始...')
       console.log('提案内容:', formData)
       
-      const result = await submitScoutProposal(keypair, formData)
+      const result = await submitScoutProposalAction(formData)
 
       if (!result.success) {
-        throw new Error('トランザクションが失敗しました')
+        throw new Error(result.error || 'トランザクションが失敗しました')
       }
 
       console.log('✅ 提案送信成功!')
       console.log('Proposal ID:', result.proposalId)
-      console.log('Transaction:', result.digest)
 
       // コンテキストに追加
       const localProposalId = await addProposal({
         ...formData,
-        proposerAddress: address,
+        proposerAddress: 'mock', // モックから送信
         proposerName: 'あなた',
       })
 
       setProposalId(result.proposalId || localProposalId)
-      setTxDigest(result.digest || null)
+      setTxDigest(null)
       setIsSuccess(true)
     } catch (error: any) {
       console.error('❌ 提案送信失敗:', error)
@@ -326,15 +317,6 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
             </p>
           </div>
 
-          {/* ウォレット接続チェック */}
-          {!isConnected && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-xs text-blue-900">
-                <strong>ウォレット未接続:</strong> 提案を送信するにはウォレットを接続してください。
-              </p>
-            </div>
-          )}
-
           {/* エラー表示 */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
@@ -355,7 +337,7 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
             </Button>
             <Button
               type="submit"
-              disabled={!isConnected || isProcessing}
+              disabled={isProcessing}
               className="min-w-[120px]"
             >
               {isProcessing ? (
@@ -363,8 +345,6 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   送信中...
                 </>
-              ) : !isConnected ? (
-                'ウォレット未接続'
               ) : (
                 '推薦を送信'
               )}

@@ -10,8 +10,7 @@ import { Fighter } from '@/lib/types'
 import { Loader2, Wallet, TrendingUp, Award, CheckCircle2, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import { useInvestments } from '@/lib/investment-context'
-import { useWallet } from '@/lib/wallet-context'
-import { investInFighter } from '@/lib/sui-client'
+import { mintInvestmentShareNFT } from '@/app/actions/invest-mock'
 
 interface InvestmentModalProps {
   fighter: Fighter
@@ -21,7 +20,6 @@ interface InvestmentModalProps {
 
 export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalProps) {
   const { addInvestment } = useInvestments()
-  const { keypair, isConnected, address } = useWallet()
   const [amount, setAmount] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -57,37 +55,28 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
       return
     }
 
-    // ウォレット接続チェック
-    if (!isConnected || !keypair || !address) {
-      setError('ウォレットを接続してください')
-      return
-    }
-
     setIsProcessing(true)
     setError(null)
 
     try {
-      // 実際のSuiブロックチェーン処理
-      // TODO: fighter.idを実際のFighter Object IDに置き換える必要があります
-      const fighterId = process.env.NEXT_PUBLIC_PLATFORM_ID || fighter.id
-      
+      // サーバーサイドでNFTを発行（モックモード）
+      // 注意: 実際のSUI決済は行わず、NFTのみを発行します
       console.log('🚀 投資トランザクション開始...')
-      console.log('Fighter ID:', fighterId)
+      console.log('Fighter ID:', fighter.id)
       console.log('投資額:', numAmount, 'SUI')
       
-      const result = await investInFighter(
-        keypair,
-        fighterId,
+      // Server Actionを使用してNFTを発行
+      const result = await mintInvestmentShareNFT(
+        fighter.id,
         numAmount
       )
 
       if (!result.success) {
-        throw new Error('トランザクションが失敗しました')
+        throw new Error(result.error || 'NFT発行に失敗しました')
       }
 
       console.log('✅ 投資成功!')
       console.log('NFT ID:', result.nftId)
-      console.log('Transaction:', result.digest)
 
       // NFT発行成功
       const sharePercentage = parseFloat(calculateShare(numAmount))
@@ -96,7 +85,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
         nftId: result.nftId || `0x${Math.random().toString(16).substr(2, 40)}`,
         sharePercentage,
         investmentAmount: numAmount,
-        txDigest: result.digest,
+        txDigest: undefined,
       })
 
       // 投資コンテキストに追加
@@ -106,7 +95,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
         fighterName: fighter.name,
         fighterNameJa: fighter.nameJa,
         fighterImage: fighter.image,
-        investorAddress: address,
+        investorAddress: 'mock', // モック投資
         amount: numAmount,
         percentage: sharePercentage,
         investedAt: new Date().toISOString(),
@@ -124,7 +113,18 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
       setIsSuccess(true)
     } catch (error: any) {
       console.error('❌ 投資失敗:', error)
-      setError(error.message || '投資処理に失敗しました。もう一度お試しください。')
+      
+      // エラーメッセージをより分かりやすく
+      let errorMessage = '投資処理に失敗しました。'
+      if (error.message?.includes('No function')) {
+        errorMessage = 'スマートコントラクトの関数が見つかりません。'
+      } else if (error.message?.includes('Object not found')) {
+        errorMessage = 'この選手はまだブロックチェーン上に作成されていません。管理者がスカウト提案を承認する必要があります。'
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      setError(errorMessage)
     } finally {
       setIsProcessing(false)
     }
@@ -312,15 +312,6 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
             </div>
           )}
 
-          {/* ウォレット接続チェック */}
-          {!isConnected && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-xs text-blue-900">
-                <strong>ウォレット未接続:</strong> 投資するにはウォレットを接続してください。
-              </p>
-            </div>
-          )}
-
           {/* エラー表示 */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
@@ -344,7 +335,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
           </Button>
           <Button
             onClick={handleInvest}
-            disabled={!isConnected || numAmount < minInvestment || numAmount > maxInvestment || isProcessing}
+            disabled={numAmount < minInvestment || numAmount > maxInvestment || isProcessing}
             className="min-w-[120px]"
           >
             {isProcessing ? (
@@ -352,8 +343,6 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 処理中...
               </>
-            ) : !isConnected ? (
-              'ウォレット未接続'
             ) : (
               <>
                 <Wallet className="h-4 w-4 mr-2" />
