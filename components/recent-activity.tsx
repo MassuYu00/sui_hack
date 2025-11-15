@@ -12,7 +12,7 @@ export function RecentActivity() {
       icon: TrendingUp,
       iconColor: 'text-green-600',
       iconBg: 'bg-green-50',
-      title: 'リターン分配',
+      title: 'Return Distribution',
       description: 'Maria Rodriguez - Brazil Fight Night 2024',
       amount: '+$150',
       date: '2025-01-05',
@@ -23,8 +23,8 @@ export function RecentActivity() {
       icon: Trophy,
       iconColor: 'text-yellow-600',
       iconBg: 'bg-yellow-50',
-      title: 'Winning Second SBT獲得',
-      description: 'Viktor Volkov - Bellator 312で勝利',
+      title: 'Winning Second SBT Acquired',
+      description: 'Viktor Volkov - Victory at Bellator 312',
       date: '2024-09-23',
     },
     {
@@ -33,8 +33,8 @@ export function RecentActivity() {
       icon: Award,
       iconColor: 'text-purple-600',
       iconBg: 'bg-purple-50',
-      title: '投資持分NFT取得',
-      description: '山田 剛 - $500投資',
+      title: 'Investment Share NFT Acquired',
+      description: 'Tsuyoshi Yamada - $500 investment',
       date: '2025-01-11',
     },
     {
@@ -43,8 +43,8 @@ export function RecentActivity() {
       icon: UserPlus,
       iconColor: 'text-blue-600',
       iconBg: 'bg-blue-50',
-      title: 'スカウト推薦',
-      description: 'Maria Rodriguez - 推薦が承認されました',
+      title: 'Scout Recommendation',
+      description: 'Maria Rodriguez - Recommendation approved',
       date: '2024-11-08',
     },
   ]
@@ -52,7 +52,7 @@ export function RecentActivity() {
   return (
     <Card className="border-primary/10">
       <CardHeader>
-        <CardTitle>最近のアクティビティ</CardTitle>
+        <CardTitle>Recent Activity</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -77,7 +77,7 @@ export function RecentActivity() {
                   </div>
                   <p className="text-sm text-muted-foreground">{activity.description}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(activity.date).toLocaleDateString('ja-JP')}
+                    {new Date(activity.date).toLocaleDateString('en-US')}
                   </p>
                 </div>
               </div>

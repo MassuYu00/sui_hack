@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react'
 
 export interface ScoutProposal {
   id: string
-  fighterId?: string // 承認後に割り当て
+  fighterId?: string // Assigned after approval
   fighterName: string
   fighterNameJa: string
   nationality: string
@@ -19,7 +19,7 @@ export interface ScoutProposal {
   submittedAt: string
   reviewedAt?: string
   reviewComment?: string
-  rewardAmount?: number // 承認された場合の報酬額
+  rewardAmount?: number // Reward amount if approved
 }
 
 interface ScoutContextType {
@@ -39,11 +39,11 @@ export function ScoutProvider({ children }: { children: ReactNode }) {
     {
       id: 'proposal-001',
       fighterName: 'Kenta Sato',
-      fighterNameJa: '佐藤健太',
-      nationality: '日本',
-      weightClass: 'ライト級',
+      fighterNameJa: 'Kenta Sato',
+      nationality: 'Japan',
+      weightClass: 'Lightweight',
       currentRecord: '8-1-0',
-      reason: '地方大会で圧倒的な強さを見せている。スピードとテクニックが際立っており、メジャー団体でも通用する素質がある。',
+      reason: 'Showing overwhelming strength in regional competitions. Speed and technique stand out, has the potential to compete in major organizations.',
       stakeAmount: 100,
       proposerAddress: '0x...',
       proposerName: 'scout_master_123',
@@ -54,11 +54,11 @@ export function ScoutProvider({ children }: { children: ReactNode }) {
       id: 'proposal-002',
       fighterId: 'fighter-002',
       fighterName: 'Mihyang Lee',
-      fighterNameJa: '李美香',
-      nationality: '韓国',
-      weightClass: '女子フライ級',
+      fighterNameJa: 'Mihyang Lee',
+      nationality: 'South Korea',
+      weightClass: 'Women\'s Flyweight',
       currentRecord: '6-0-0',
-      reason: 'アマチュア時代から無敗。打撃のキレが素晴らしく、将来のチャンピオン候補。韓国で注目されている逸材。',
+      reason: 'Undefeated since amateur days. Striking is exceptional, a future champion candidate. Rising talent attracting attention in Korea.',
       videoUrl: 'https://youtube.com/watch?v=example',
       stakeAmount: 150,
       proposerAddress: '0x...',
@@ -66,33 +66,33 @@ export function ScoutProvider({ children }: { children: ReactNode }) {
       status: 'approved',
       submittedAt: '2025-11-05T14:30:00Z',
       reviewedAt: '2025-11-08T09:00:00Z',
-      reviewComment: '素晴らしい推薦です。キュレーションチームで選抜を進めます。',
-      rewardAmount: 600, // 20000の3%
+      reviewComment: 'Excellent recommendation. Moving forward with curation team selection.',
+      rewardAmount: 600, // 3% of 20000
     },
     {
       id: 'proposal-003',
       fighterName: 'Mike Thompson',
-      fighterNameJa: 'マイク・トンプソン',
-      nationality: 'アメリカ',
-      weightClass: 'ウェルター級',
+      fighterNameJa: 'Mike Thompson',
+      nationality: 'USA',
+      weightClass: 'Welterweight',
       currentRecord: '5-3-0',
-      reason: 'レスリングベースの選手で地力がある。',
+      reason: 'Wrestling-based fighter with solid fundamentals.',
       stakeAmount: 50,
       proposerAddress: '0x...',
       proposerName: 'new_scout',
       status: 'rejected',
       submittedAt: '2025-11-01T18:00:00Z',
       reviewedAt: '2025-11-03T11:00:00Z',
-      reviewComment: '戦績と推薦理由が不十分です。より具体的な情報をお願いします。',
+      reviewComment: 'Record and recommendation reason are insufficient. Please provide more specific information.',
     },
   ])
 
   const addProposal = async (
     proposal: Omit<ScoutProposal, 'id' | 'status' | 'submittedAt'>
   ): Promise<string> => {
-    // TODO: 実際のブロックチェーン処理
-    // 1. ステーク額をスマートコントラクトにロック
-    // 2. 提案をオンチェーンに記録
+    // TODO: Actual blockchain processing
+    // 1. Lock stake amount in smart contract
+    // 2. Record proposal on-chain
     
     const newProposal: ScoutProposal = {
       ...proposal,
@@ -113,7 +113,7 @@ export function ScoutProvider({ children }: { children: ReactNode }) {
     return proposals.filter((p) => p.status === status)
   }
 
-  // 現在のユーザーの提案（実際はウォレットアドレスで判定）
+  // Current user's proposals (in practice, determined by wallet address)
   const userProposals = proposals.filter((p) => p.proposerAddress === '0x...')
 
   const getTotalStaked = () => {

@@ -15,7 +15,7 @@ const mockSBTs = {
     {
       id: '1',
       fighterId: '1',
-      fighterName: '山田剛',
+      fighterName: 'Takeshi Yamada',
       fighterImage: '/Gemini_Generated_Image_3j4iq63j4iq63j4i.png',
       metadata: {
         eventName: 'UFC Fight Night 235',
@@ -76,14 +76,14 @@ export default function BadgesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNav title="マイバッジコレクション" />
+      <DashboardNav title="My Badge Collection" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">マイバッジコレクション</h1>
+          <h1 className="text-4xl font-bold mb-4">My Badge Collection</h1>
           <p className="text-xl text-muted-foreground mb-8">
-            あなたが獲得した譲渡不可能なSoul Bound Token（SBT）
+            Your non-transferable Soul Bound Tokens (SBT)
           </p>
 
           {/* Stats */}
@@ -96,7 +96,7 @@ export default function BadgesPage() {
                   </div>
                   <div>
                     <div className="text-3xl font-bold">{totalBadges}</div>
-                    <div className="text-sm text-muted-foreground">総バッジ数</div>
+                    <div className="text-sm text-muted-foreground">Total Badges</div>
                   </div>
                 </div>
               </CardContent>
@@ -150,15 +150,15 @@ export default function BadgesPage() {
             </Badge>
           </div>
           <p className="text-muted-foreground mb-6">
-            投資した選手が勝利した瞬間を記録する名誉の証。「俺が育てた」という究極の当事者意識の証明。
+            A badge of honor commemorating the moment your supported fighter achieved victory. The ultimate proof of "I helped raise them."
           </p>
 
           {mockSBTs.winningSecond.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                まだWinning Second SBTを獲得していません。
+                You haven't earned any Winning Second SBTs yet.
                 <br />
-                選手に投資して、勝利の瞬間を共有しましょう。
+                Support a fighter and share in their moment of victory.
               </CardContent>
             </Card>
           ) : (
@@ -202,24 +202,24 @@ export default function BadgesPage() {
 
                     <div className="pt-3 border-t space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">試合日:</span>
+                        <span className="text-muted-foreground">Fight Date:</span>
                         <span className="font-medium">
                           {new Date(sbt.metadata.eventDate).toLocaleDateString(
-                            'ja-JP'
+                            'en-US'
                           )}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">発行日:</span>
+                        <span className="text-muted-foreground">Issued:</span>
                         <span className="font-medium">
-                          {new Date(sbt.issuedAt).toLocaleDateString('ja-JP')}
+                          {new Date(sbt.issuedAt).toLocaleDateString('en-US')}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 pt-3 text-xs text-muted-foreground">
                       <Shield className="w-4 h-4" />
-                      <span>譲渡不可能（Soul Bound）</span>
+                      <span>Non-transferable (Soul Bound)</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -238,15 +238,15 @@ export default function BadgesPage() {
             </Badge>
           </div>
           <p className="text-muted-foreground mb-6">
-            才能ある選手を発掘し、資金調達に成功させた目利きの証。スカウト報酬（調達額の3%）と共に発行されます。
+            Proof of your talent scouting prowess for discovering and helping fighters raise funds. Issued with scout reward (3% of total funding).
           </p>
 
           {mockSBTs.scoutMaster.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                まだScout Master SBTを獲得していません。
+                You haven't earned any Scout Master SBTs yet.
                 <br />
-                有望な選手を推薦し、目利きの証を手に入れましょう。
+                Recommend promising fighters and prove your scouting talent.
               </CardContent>
             </Card>
           ) : (
@@ -281,9 +281,9 @@ export default function BadgesPage() {
                         />
                       </div>
                       <div>
-                        <p className="font-semibold">スカウト成功</p>
+                        <p className="font-semibold">Scouting Success</p>
                         <p className="text-sm text-muted-foreground">
-                          目利きの証
+                          Talent Scout Badge
                         </p>
                       </div>
                     </div>
@@ -291,17 +291,17 @@ export default function BadgesPage() {
                     <div className="pt-3 border-t space-y-1 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          推薦日:
+                          Scouted:
                         </span>
                         <span className="font-medium">
                           {new Date(
                             sbt.metadata.scoutedAt!
-                          ).toLocaleDateString('ja-JP')}
+                          ).toLocaleDateString('en-US')}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          調達総額:
+                          Total Funding:
                         </span>
                         <span className="font-medium">
                           ${sbt.metadata.totalFundingRaised?.toLocaleString()}
@@ -309,7 +309,7 @@ export default function BadgesPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          スカウト報酬:
+                          Scout Reward:
                         </span>
                         <span className="font-bold text-purple-600">
                           ${sbt.metadata.scoutReward?.toLocaleString()}
@@ -319,7 +319,7 @@ export default function BadgesPage() {
 
                     <div className="flex items-center gap-2 pt-3 text-xs text-muted-foreground">
                       <Shield className="w-4 h-4" />
-                      <span>譲渡不可能（Soul Bound）</span>
+                      <span>Non-transferable (Soul Bound)</span>
                     </div>
                   </CardContent>
                 </Card>

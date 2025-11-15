@@ -35,16 +35,16 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
   const maxInvestment = 10000
   const numAmount = parseFloat(amount) || 0
 
-  // 投資額から獲得シェアを計算（簡易計算）
+  // Calculate acquired share from investment amount (simple calculation)
   const calculateShare = (investAmount: number) => {
     const remaining = fighter.funding.targetAmount - fighter.funding.currentAmount
     return ((investAmount / remaining) * 100).toFixed(2)
   }
 
-  // 推定リターンを計算（年間賞金想定から）
+  // Calculate estimated return (based on annual prize money assumption)
   const calculateEstimatedReturn = (investAmount: number) => {
     const sharePercent = parseFloat(calculateShare(investAmount))
-    const annualPrizeMoney = 50000 // 年間賞金想定額（仮）
+    const annualPrizeMoney = 50000 // Estimated annual prize money (provisional)
     const isaPercent = fighter.isaContract?.percentage || 30
     const annualReturn = (annualPrizeMoney * (isaPercent / 100) * (sharePercent / 100))
     return annualReturn.toFixed(0)
@@ -59,23 +59,23 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
     setError(null)
 
     try {
-      // サーバーサイドでNFTを発行（モックモード）
-      // 注意: 実際のSUI決済は行わず、NFTのみを発行します
-      console.log('🚀 投資トランザクション開始...')
+      // Issue NFT on server side (mock mode)
+      // Note: Does not perform actual SUI payment, only issues NFT
+      console.log('🚀 Starting investment transaction...')
       console.log('Fighter ID:', fighter.id)
-      console.log('投資額:', numAmount, 'SUI')
+      console.log('Investment amount:', numAmount, 'SUI')
       
-      // Server Actionを使用してNFTを発行
+      // Issue NFT using Server Action
       const result = await mintInvestmentShareNFT(
         fighter.id,
         numAmount
       )
 
       if (!result.success) {
-        throw new Error(result.error || 'NFT発行に失敗しました')
+        throw new Error(result.error || 'Failed to mint NFT')
       }
 
-      console.log('✅ 投資成功!')
+      console.log('✅ Investment successful!')
       console.log('NFT ID:', result.nftId)
 
       // NFT発行成功
@@ -88,14 +88,14 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
         txDigest: undefined,
       })
 
-      // 投資コンテキストに追加
+      // Add to investment context
       addInvestment({
         id: result.nftId || `temp-${Date.now()}`,
         fighterId: fighter.id,
         fighterName: fighter.name,
         fighterNameJa: fighter.nameJa,
         fighterImage: fighter.image,
-        investorAddress: 'mock', // モック投資
+        investorAddress: 'mock', // Mock investment
         amount: numAmount,
         percentage: sharePercentage,
         investedAt: new Date().toISOString(),
@@ -112,14 +112,14 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
       
       setIsSuccess(true)
     } catch (error: any) {
-      console.error('❌ 投資失敗:', error)
+      console.error('❌ Investment failed:', error)
       
-      // エラーメッセージをより分かりやすく
-      let errorMessage = '投資処理に失敗しました。'
+      // Make error message more understandable
+      let errorMessage = 'Investment processing failed.'
       if (error.message?.includes('No function')) {
-        errorMessage = 'スマートコントラクトの関数が見つかりません。'
+        errorMessage = 'Smart contract function not found.'
       } else if (error.message?.includes('Object not found')) {
-        errorMessage = 'この選手はまだブロックチェーン上に作成されていません。管理者がスカウト提案を承認する必要があります。'
+        errorMessage = 'This fighter has not been created on the blockchain yet. An administrator needs to approve the scout proposal.'
       } else if (error.message) {
         errorMessage = error.message
       }
@@ -146,7 +146,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
     }
   }
 
-  // 投資成功画面
+  // Investment success screen
   if (isSuccess && nftDetails) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -157,10 +157,10 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
                 <CheckCircle2 className="h-12 w-12 text-green-600" />
               </div>
               <DialogTitle className="text-2xl text-center">
-                投資完了！
+                Investment Complete!
               </DialogTitle>
               <DialogDescription className="text-center">
-                Investment Share NFTが発行されました
+                Investment Share NFT has been minted
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -185,11 +185,11 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center py-2 border-t">
-                  <span className="text-sm text-muted-foreground">投資額</span>
+                  <span className="text-sm text-muted-foreground">Investment Amount</span>
                   <span className="font-semibold">${nftDetails.investmentAmount.toLocaleString()} USDsui</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-t">
-                  <span className="text-sm text-muted-foreground">獲得シェア</span>
+                  <span className="text-sm text-muted-foreground">Acquired Share</span>
                   <span className="font-semibold text-primary">{nftDetails.sharePercentage.toFixed(2)}%</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-t">
@@ -199,13 +199,13 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
               </div>
             </div>
 
-            {/* 説明 */}
+            {/* Explanation */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <Award className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
                 <div className="text-sm text-blue-900">
-                  <p className="font-semibold mb-1">今後の流れ</p>
-                  <p>選手が試合で獲得した賞金の一部が、あなたのNFT保有率に応じて自動的に分配されます。</p>
+                  <p className="font-semibold mb-1">Next Steps</p>
+                  <p>A portion of prize money won by the fighter will be automatically distributed according to your NFT holding ratio.</p>
                 </div>
               </div>
             </div>
@@ -213,11 +213,11 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={handleClose} className="flex-1">
-              閉じる
+              Close
             </Button>
             <Button onClick={handleViewNFT} className="flex-1">
               <ExternalLink className="h-4 w-4 mr-2" />
-              NFTを見る
+              View NFT
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -225,7 +225,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
     )
   }
 
-  // 投資入力画面
+  // Investment input screen
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
@@ -240,19 +240,19 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
               />
             </div>
             <div>
-              <p>{fighter.nameJa} に投資</p>
+              <p>Invest in {fighter.nameJa}</p>
               <p className="text-sm font-normal text-muted-foreground">{fighter.name}</p>
             </div>
           </DialogTitle>
           <DialogDescription>
-            投資額を入力してください（{minInvestment} - {maxInvestment} USDsui）
+            Enter investment amount ({minInvestment} - {maxInvestment} USDsui)
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* 投資額入力 */}
+          {/* Investment amount input */}
           <div className="space-y-2">
-            <Label htmlFor="amount">投資額（USDsui）</Label>
+            <Label htmlFor="amount">Investment Amount (USDsui)</Label>
             <div className="relative">
               <Input
                 id="amount"
@@ -270,20 +270,20 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              最小: ${minInvestment} | 最大: ${maxInvestment}
+              Min: ${minInvestment} | Max: ${maxInvestment}
             </p>
           </div>
 
-          {/* プレビュー情報 */}
+          {/* Preview information */}
           {numAmount >= minInvestment && (
             <div className="space-y-3 p-4 bg-muted rounded-lg">
-              <h4 className="font-semibold text-sm">投資内容</h4>
+              <h4 className="font-semibold text-sm">Investment Details</h4>
               
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <TrendingUp className="h-4 w-4" />
-                    獲得シェア
+                    Acquired Share
                   </span>
                   <span className="font-semibold text-primary">
                     {calculateShare(numAmount)}%
@@ -293,7 +293,7 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <Award className="h-4 w-4" />
-                    推定年間リターン
+                    Estimated Annual Return
                   </span>
                   <span className="font-semibold text-green-600">
                     ${calculateEstimatedReturn(numAmount)}
@@ -302,36 +302,36 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
 
                 <div className="flex justify-between items-center pt-2 border-t">
                   <span className="text-sm text-muted-foreground">
-                    ISA契約
+                    ISA Contract
                   </span>
                   <span className="text-sm">
-                    賞金の {fighter.isaContract?.percentage}% を {fighter.isaContract?.duration}年間
+                    {fighter.isaContract?.percentage}% of prize money for {fighter.isaContract?.duration} years
                   </span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* エラー表示 */}
+          {/* Error display */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
               <p className="text-xs text-red-900">
-                <strong>エラー:</strong> {error}
+                <strong>Error:</strong> {error}
               </p>
             </div>
           )}
 
-          {/* 注意事項 */}
+          {/* Notice */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
             <p className="text-xs text-amber-900">
-              <strong>注意:</strong> 投資後、Investment Share NFTが発行されます。このNFTは譲渡可能で、選手の将来的な収益を受け取る権利を表します。
+              <strong>Notice:</strong> After investment, an Investment Share NFT will be issued. This NFT is transferable and represents the right to receive future earnings from the fighter.
             </p>
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isProcessing}>
-            キャンセル
+            Cancel
           </Button>
           <Button
             onClick={handleInvest}
@@ -341,12 +341,12 @@ export function InvestmentModal({ fighter, isOpen, onClose }: InvestmentModalPro
             {isProcessing ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                処理中...
+                Processing...
               </>
             ) : (
               <>
                 <Wallet className="h-4 w-4 mr-2" />
-                投資する
+                Invest
               </>
             )}
           </Button>

@@ -30,7 +30,7 @@ export default function SettingsPage() {
   const timeUntilExpiry = expiryTime ? Math.max(0, Math.floor((expiryTime - Date.now()) / 1000 / 60 / 60)) : 0
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('ja-JP', {
+    return new Date(timestamp).toLocaleString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -40,10 +40,10 @@ export default function SettingsPage() {
   }
 
   const handleDeleteAccount = () => {
-    if (confirm('アカウントを削除してもよろしいですか？この操作は取り消せません。')) {
-      if (confirm('本当に削除しますか？すべてのデータが失われます。')) {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      if (confirm('Are you really sure? All your data will be lost.')) {
         logout()
-        alert('アカウントが削除されました')
+        alert('Account has been deleted')
       }
     }
   }
@@ -52,8 +52,8 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">設定</h1>
-          <p className="text-muted-foreground">アカウントとセキュリティの設定</p>
+          <h1 className="text-4xl font-bold mb-2">Settings</h1>
+          <p className="text-muted-foreground">Account and security settings</p>
         </div>
 
         {/* Account Information */}
@@ -61,15 +61,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              アカウント情報
+              Account Information
             </CardTitle>
             <CardDescription>
-              ZKLogin で認証されたアカウント情報
+              Account information authenticated with ZKLogin
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>メールアドレス</Label>
+              <Label>Email Address</Label>
               <div className="flex items-center gap-2">
                 <code className="text-sm bg-muted px-3 py-2 rounded flex-1">
                   {session.userEmail}
@@ -81,7 +81,7 @@ export default function SettingsPage() {
             <Separator />
 
             <div className="space-y-2">
-              <Label>Sui アドレス</Label>
+              <Label>Sui Address</Label>
               <code className="text-xs bg-muted px-3 py-2 rounded block break-all">
                 {session.address}
               </code>
@@ -93,7 +93,7 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  作成日時
+                  Created At
                 </Label>
                 <p className="text-sm text-muted-foreground">
                   {formatDate(session.createdAt)}
@@ -103,7 +103,7 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Key className="h-4 w-4" />
-                  認証プロバイダー
+                  Auth Provider
                 </Label>
                 <p className="text-sm text-muted-foreground capitalize">
                   {session.provider}
@@ -118,35 +118,33 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              セッション情報
+              Session Information
             </CardTitle>
             <CardDescription>
-              現在のセッションの状態と有効期限
+              Current session status and expiration
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
                 <div className="flex-1">
-                  <p className="font-medium mb-1">セッション有効期限</p>
+                  <p className="font-medium mb-1">Session Expiry</p>
                   <p className="text-sm text-muted-foreground mb-2">
-                    あと約 {timeUntilExpiry} 時間で期限切れになります
+                    Expires in approximately {timeUntilExpiry} hours
                   </p>
                   {expiryTime && (
                     <p className="text-xs text-muted-foreground">
-                      期限: {formatDate(expiryTime)}
+                      Expires: {formatDate(expiryTime)}
                     </p>
                   )}
                 </div>
               </div>
-            </div>
-
-            {sessionData && (
+            </div>            {sessionData && (
               <>
                 <Separator />
                 <div className="space-y-2">
-                  <Label>最大エポック</Label>
+                  <Label>Max Epoch</Label>
                   <p className="text-sm text-muted-foreground">
                     Epoch {sessionData.maxEpoch}
                   </p>
@@ -161,33 +159,33 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              セキュリティ
+              Security
             </CardTitle>
             <CardDescription>
-              アカウントのセキュリティ設定
+              Account security settings
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">ZKLogin 認証</p>
+                <p className="font-medium">ZKLogin Authentication</p>
                 <p className="text-sm text-muted-foreground">
-                  ゼロ知識証明による匿名認証
+                  Anonymous authentication via zero-knowledge proofs
                 </p>
               </div>
-              <Badge variant="default">有効</Badge>
+              <Badge variant="default">Enabled</Badge>
             </div>
 
             <Separator />
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">セッション自動更新</p>
+                <p className="font-medium">Auto Session Renewal</p>
                 <p className="text-sm text-muted-foreground">
-                  有効期限が近づくと自動的に延長されます
+                  Automatically extends when expiration approaches
                 </p>
               </div>
-              <Badge variant="secondary">有効</Badge>
+              <Badge variant="secondary">Enabled</Badge>
             </div>
           </CardContent>
         </Card>
@@ -195,30 +193,30 @@ export default function SettingsPage() {
         {/* Danger Zone */}
         <Card className="border-destructive/50">
           <CardHeader>
-            <CardTitle className="text-destructive">危険な操作</CardTitle>
+            <CardTitle className="text-destructive">Danger Zone</CardTitle>
             <CardDescription>
-              これらの操作は取り消すことができません
+              These actions cannot be undone
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">ログアウト</p>
+                <p className="font-medium">Logout</p>
                 <p className="text-sm text-muted-foreground">
-                  すべてのセッションを無効化します
+                  Invalidate all sessions
                 </p>
               </div>
               <Button 
                 variant="outline" 
                 onClick={() => {
-                  if (confirm('ログアウトしてもよろしいですか?')) {
+                  if (confirm('Are you sure you want to logout?')) {
                     logout()
                   }
                 }}
                 className="gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                ログアウト
+                Logout
               </Button>
             </div>
 
@@ -226,16 +224,16 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-destructive">アカウント削除</p>
+                <p className="font-medium text-destructive">Delete Account</p>
                 <p className="text-sm text-muted-foreground">
-                  アカウントとすべてのデータを完全に削除します
+                  Permanently delete your account and all data
                 </p>
               </div>
               <Button 
                 variant="destructive" 
                 onClick={handleDeleteAccount}
               >
-                アカウント削除
+                Delete Account
               </Button>
             </div>
           </CardContent>

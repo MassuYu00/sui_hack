@@ -40,7 +40,7 @@ export default function FighterProfilePage({ params }: { params: { name: string 
           <div className="text-center py-12">
             <h1 className="text-2xl font-bold mb-4">選手が見つかりません</h1>
             <Button asChild>
-              <Link href="/">ホームに戻る</Link>
+              <Link href="/">Back to Home</Link>
             </Button>
           </div>
         </main>
@@ -72,7 +72,7 @@ export default function FighterProfilePage({ params }: { params: { name: string 
           <Button variant="ghost" size="sm" asChild className="gap-2">
             <Link href="/">
               <ArrowLeft className="h-4 w-4" />
-              選手一覧に戻る
+              Back to Fighters
             </Link>
           </Button>
 

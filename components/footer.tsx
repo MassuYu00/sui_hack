@@ -41,7 +41,7 @@ export default function Footer() {
 
         <div className="border-t border-background/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm opacity-80">
-            <p>&copy; 2025 FIGHTER'S RISING. All rights reserved.</p>
+            <p>&copy; 2025 FIGHTER'S RISING DAO. All rights reserved.</p>
             <p className="mt-4 md:mt-0">Powered by <span className="font-bold text-primary">Sui Blockchain</span></p>
           </div>
         </div>

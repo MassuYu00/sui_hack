@@ -365,7 +365,7 @@ export async function investInFighter(
 // ヘルパー関数: 選手名を取得
 function getFighterName(fighterId: string): string {
   const fighterMap: Record<string, string> = {
-    'fighter-001': '山田剛',
+    'fighter-001': 'Takeshi Yamada',
     'fighter-002': 'マリア・ロドリゲス',
     'fighter-003': 'カルロス・メンデス',
     'fighter-004': 'ノン・サエンチャイ',

@@ -15,8 +15,8 @@ export const mockFighters: Fighter[] = [
       losses: 2,
       draws: 0,
     },
-    backstory: '地方の小さなジムで才能を開花させた若き獅子。家族を支えるため建設現場で働きながら、早朝と深夜に練習を重ねてきた。地元の試合では無敗を誇るが、海外での経験はゼロ。「世界で通用する技術を学びたい」という夢を持ち、タイのトップジムでの修行を目指している。',
-    goal: 'タイ・バンコクの名門ジムで6ヶ月間の修行後、ONE Championshipデビュー',
+    backstory: 'A young lion who discovered his talent at a small local gym. While supporting his family by working at a construction site, he trained in the early mornings and late nights. Undefeated in local competitions but with zero international experience. Dreams of learning world-class techniques at a top gym in Thailand.',
+    goal: 'Train at a prestigious Bangkok gym for 6 months, then debut in ONE Championship',
     currentStatus: 'fundraising',
     isaContract: {
       percentage: 30,
@@ -43,8 +43,8 @@ export const mockFighters: Fighter[] = [
       losses: 1,
       draws: 0,
     },
-    backstory: 'ファベーラ（スラム街）出身の女性格闘家。兄が組織犯罪に巻き込まれたことをきっかけに、「強くなって家族を守る」と決意。地元の無料道場で頭角を現し、ブラジル国内アマチュア大会で優勝。しかし資金難でプロのキャリアが停滞していた。',
-    goal: 'アメリカ・ラスベガスのトップジムで女子MMAのエリート技術を習得し、UFCへ',
+    backstory: 'A female fighter from the favela (slum). After her brother was caught up in organized crime, she decided to "become strong to protect her family." Rose to prominence at a local free dojo and won the Brazilian national amateur championship. However, her professional career stalled due to financial difficulties.',
+    goal: 'Master elite women\'s MMA techniques at a top Las Vegas gym and reach the UFC',
     currentStatus: 'training',
     isaContract: {
       percentage: 25,
@@ -60,36 +60,6 @@ export const mockFighters: Fighter[] = [
     lastUpdated: '2025-01-14T08:15:00Z',
   },
 
-  // ボクシング
-  {
-    id: 'fighter-003',
-    name: 'Carlos "El Martillo" Mendez',
-    nameJa: 'カルロス・メンデス',
-    age: 23,
-    nationality: 'Mexico',
-    weightClass: 'Super Featherweight (59kg)',
-    record: {
-      wins: 15,
-      losses: 1,
-      draws: 0,
-    },
-    backstory: 'メキシコシティの貧困地区出身。9歳でボクシングを始め、地元では「若き破壊者」として知られる。アマチュア時代は国内無敗だったが、家族を養うために早期プロデビュー。世界チャンピオンを目指すため、アメリカでトップトレーナーの指導を受けたいと願っている。',
-    goal: 'ラスベガスのトップジムで世界レベルのテクニックを習得し、WBC世界王座挑戦',
-    currentStatus: 'fundraising',
-    isaContract: {
-      percentage: 32,
-      duration: 5,
-    },
-    funding: {
-      targetAmount: 18000,
-      currentAmount: 11200,
-      investorCount: 203,
-    },
-    image: '/Gemini_Generated_Image_4fla5q4fla5q4fla.png',
-    listedAt: '2025-01-05T00:00:00Z',
-    lastUpdated: '2025-01-15T10:00:00Z',
-  },
-
   // キックボクシング
   {
     id: 'fighter-004',
@@ -103,8 +73,8 @@ export const mockFighters: Fighter[] = [
       losses: 8,
       draws: 2,
     },
-    backstory: 'タイ北部の農村出身。8歳からムエタイを始め、地方スタジアムで200試合以上を経験。しかし賞金は少なく、家族の農業を手伝いながら細々と戦ってきた。「世界のリングで戦いたい」という夢を実現するため、バンコクの名門ジムへの移籍を目指している。',
-    goal: 'バンコクの名門ペッチヤインディージムで修行し、ONE Championship参戦',
+    backstory: 'From a rural village in northern Thailand. Started Muay Thai at age 8 and has over 200 fights at local stadiums. However, prize money was minimal, and he has been fighting modestly while helping with family farming. Aims to transfer to a prestigious Bangkok gym to realize his dream of "fighting on the world stage."',
+    goal: 'Train at the prestigious Petchyindee gym in Bangkok and compete in ONE Championship',
     currentStatus: 'active',
     isaContract: {
       percentage: 28,
@@ -131,8 +101,8 @@ export const mockFighters: Fighter[] = [
       losses: 3,
       draws: 1,
     },
-    backstory: '北海道出身の女性キックボクサー。厳格な家庭で育ち、父親の反対を押し切って格闘技の道へ。日本国内では女子の試合機会が限られているため、タイやオランダで経験を積みたいと考えている。「女性でも世界で戦える」ことを証明したい。',
-    goal: 'オランダとタイで修行を積み、RISEとONE Championshipで世界王座獲得',
+    backstory: 'A female kickboxer from Hokkaido. Raised in a strict household, she pursued martial arts against her father\'s opposition. With limited opportunities for women\'s matches in Japan, she wants to gain experience in Thailand and the Netherlands. Wants to prove that "women can compete on the world stage too."',
+    goal: 'Train in the Netherlands and Thailand, then win world titles in RISE and ONE Championship',
     currentStatus: 'fundraising',
     isaContract: {
       percentage: 30,
@@ -161,8 +131,8 @@ export const mockFighters: Fighter[] = [
       losses: 2,
       draws: 0,
     },
-    backstory: 'カザフスタンの遊牧民家族出身。幼少期から伝統レスリングで鍛えられ、国内ジュニア大会では無敗。しかし国際大会への遠征費用がなく、才能を活かせずにいた。オリンピック出場とMMA転向の両方を視野に、ロシアの名門レスリングクラブでの訓練を希望している。',
-    goal: 'ロシアの名門クラブで国際レベルの技術を習得し、2028年オリンピック出場',
+    backstory: 'From a nomadic family in Kazakhstan. Trained in traditional wrestling from childhood and undefeated in domestic junior competitions. However, lacked funds for international tournament travel and couldn\'t capitalize on his talent. With both Olympic participation and MMA transition in mind, he hopes to train at a prestigious Russian wrestling club.',
+    goal: 'Master international-level techniques at a prestigious Russian club and compete in the 2028 Olympics',
     currentStatus: 'fundraising',
     isaContract: {
       percentage: 25,

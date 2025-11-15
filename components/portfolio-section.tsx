@@ -18,23 +18,23 @@ export function PortfolioSection() {
   }
 
   const statusLabels = {
-    fundraising: '資金調達中',
-    training: '修行中',
-    active: '活動中',
+    fundraising: 'Fundraising',
+    training: 'In Training',
+    active: 'Active',
   }
 
   return (
     <Card className="border-primary/10">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>応援ポートフォリオ</CardTitle>
+          <CardTitle>Support Portfolio</CardTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            あなたが保有する応援持分NFT
+            Your support share NFTs
           </p>
         </div>
         <Button variant="outline" size="sm" asChild>
           <Link href="/invest">
-            応援先を探す <ArrowRight className="ml-2 h-4 w-4" />
+            Find Fighters <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </CardHeader>
@@ -66,25 +66,25 @@ export function PortfolioSection() {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  応援開始日: {new Date(investment.investedAt).toLocaleDateString('ja-JP')}
+                  Support started: {new Date(investment.investedAt).toLocaleDateString('en-US')}
                 </p>
               </div>
 
-              {/* 応援情報 */}
+              {/* Support Information */}
               <div className="grid grid-cols-3 gap-4 shrink-0">
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground mb-1">応援額</p>
+                  <p className="text-xs text-muted-foreground mb-1">Amount</p>
                   <p className="text-sm font-medium">${investment.amount}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground mb-1">持分</p>
+                  <p className="text-xs text-muted-foreground mb-1">Share</p>
                   <div className="flex items-center gap-1 justify-end">
                     <Award className="h-3 w-3 text-purple-600" />
                     <p className="text-sm font-medium">{investment.percentage}%</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground mb-1">リターン</p>
+                  <p className="text-xs text-muted-foreground mb-1">Returns</p>
                   <div className="flex items-center gap-1 justify-end">
                     <TrendingUp className={`h-3 w-3 ${investment.totalReturnsReceived > 0 ? 'text-green-600' : 'text-gray-400'}`} />
                     <p className={`text-sm font-medium ${investment.totalReturnsReceived > 0 ? 'text-green-600' : 'text-gray-600'}`}>
@@ -98,9 +98,9 @@ export function PortfolioSection() {
 
           {investments.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
-              <p className="mb-4">まだ応援している選手はいません</p>
+              <p className="mb-4">No fighters supported yet</p>
               <Button asChild>
-                <Link href="/invest">応援先を探す</Link>
+                <Link href="/invest">Find Fighters</Link>
               </Button>
             </div>
           )}

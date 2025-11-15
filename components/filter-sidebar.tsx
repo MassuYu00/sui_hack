@@ -18,7 +18,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
 
   const sportOptions = ['MMA', 'Boxing', 'Wrestling', 'Muay Thai', 'Judo', 'BJJ']
 
-  // フィルターが変更されたときに親に通知（レンダリング後に実行）
+  // Notify parent when filters change (executed after rendering)
   useEffect(() => {
     onFilterChange({ sports, fundingRange, minRating })
   }, [sports, fundingRange, minRating])
@@ -35,11 +35,11 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   return (
     <Card className="h-fit border-primary/10">
       <CardHeader>
-        <CardTitle className="text-lg">絞り込み</CardTitle>
+        <CardTitle className="text-lg">Filters</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
-          <Label className="text-sm font-medium">競技</Label>
+          <Label className="text-sm font-medium">Sport</Label>
           {sportOptions.map((sport) => (
             <div key={sport} className="flex items-center gap-2">
               <Checkbox
@@ -56,7 +56,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
 
         <div className="space-y-3">
           <Label className="text-sm font-medium">
-            支援金額: ${fundingRange[0].toLocaleString()} - ${fundingRange[1].toLocaleString()}
+            Funding Amount: ${fundingRange[0].toLocaleString()} - ${fundingRange[1].toLocaleString()}
           </Label>
           <Slider
             min={0}
@@ -71,7 +71,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
         </div>
 
         <div className="space-y-3">
-          <Label className="text-sm font-medium">最低人気度: {minRating.toFixed(1)}</Label>
+          <Label className="text-sm font-medium">Minimum Rating: {minRating.toFixed(1)}</Label>
           <Slider
             min={0}
             max={5}
@@ -93,7 +93,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             setMinRating(0)
           }}
         >
-          絞り込みをクリア
+          Clear Filters
         </Button>
       </CardContent>
     </Card>

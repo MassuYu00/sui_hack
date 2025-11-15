@@ -38,7 +38,7 @@ export default function InvestPage() {
   }, [isAuthenticated, isClient, router])
 
   const filteredFighters = mockFighters
-    .filter(f => f.currentStatus === 'fundraising') // 資金調達中のみ
+    .filter(f => f.currentStatus === 'fundraising') // Fundraising only
     .filter((fighter) => {
       const matchesSearch =
         fighter.nameJa.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,14 +58,14 @@ export default function InvestPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNav title="選手に投資する" />
+      <DashboardNav title="Invest in Fighters" />
       
       <main className="container mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">選手に投資する</h1>
+          <h1 className="text-4xl font-bold mb-4">Invest in Fighters</h1>
           <p className="text-xl text-muted-foreground mb-8">
-            プロスペクト選手のエンジェル投資家になり、成功をリターンとして受け取る
+            Become an angel investor for prospect fighters and receive returns from their success
           </p>
 
           {/* Investment Benefits */}
@@ -76,10 +76,10 @@ export default function InvestPage() {
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <Wallet className="w-5 h-5 text-primary" />
                   </div>
-                  <h3 className="font-semibold">投資持分NFT</h3>
+                  <h3 className="font-semibold">Investment Share NFT</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  賞金の一部を自動分配
+                  Auto-distribution of prize money
                 </p>
               </CardContent>
             </Card>
@@ -93,7 +93,7 @@ export default function InvestPage() {
                   <h3 className="font-semibold">Winning Second SBT</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  勝利の瞬間を刻む名誉
+                  Honor of the victory moment
                 </p>
               </CardContent>
             </Card>
@@ -104,10 +104,10 @@ export default function InvestPage() {
                   <div className="p-2 bg-purple-100 rounded-lg">
                     <TrendingUp className="w-5 h-5 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold">ドキュメンタリー</h3>
+                  <h3 className="font-semibold">Documentaries</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  限定映像へのアクセス
+                  Access to exclusive content
                 </p>
               </CardContent>
             </Card>
@@ -118,10 +118,10 @@ export default function InvestPage() {
                   <div className="p-2 bg-orange-100 rounded-lg">
                     <Shield className="w-5 h-5 text-orange-600" />
                   </div>
-                  <h3 className="font-semibold">特典アクセス</h3>
+                  <h3 className="font-semibold">Exclusive Benefits</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  チケット先行販売など
+                  Ticket presales and more
                 </p>
               </CardContent>
             </Card>
@@ -130,27 +130,27 @@ export default function InvestPage() {
           {/* How It Works */}
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4">投資の仕組み</h3>
+              <h3 className="font-bold text-lg mb-4">How Investment Works</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <Badge className="mb-2">Step 1</Badge>
-                  <h4 className="font-semibold mb-1">USDsuiで投資</h4>
+                  <h4 className="font-semibold mb-1">Invest with USDsui</h4>
                   <p className="text-sm text-muted-foreground">
-                    ステーブルコインで選手に投資。投資持分NFTを受け取る。
+                    Invest in fighters with stablecoin. Receive an Investment Share NFT.
                   </p>
                 </div>
                 <div>
                   <Badge className="mb-2">Step 2</Badge>
-                  <h4 className="font-semibold mb-1">選手が成長</h4>
+                  <h4 className="font-semibold mb-1">Fighter Grows</h4>
                   <p className="text-sm text-muted-foreground">
-                    ISA契約に基づき、運営が選手をサポート。修行ドキュメンタリーを制作。
+                    Based on ISA contract, team supports fighter. Training documentaries are produced.
                   </p>
                 </div>
                 <div>
                   <Badge className="mb-2">Step 3</Badge>
-                  <h4 className="font-semibold mb-1">リターン獲得</h4>
+                  <h4 className="font-semibold mb-1">Earn Returns</h4>
                   <p className="text-sm text-muted-foreground">
-                    賞金の一部を自動分配。勝利時にSBTも発行。
+                    Auto-distribution of prize money. SBT issued upon victory.
                   </p>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function InvestPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
               <Input
-                placeholder="選手名、階級で検索..."
+                placeholder="Search by name, weight class..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -177,9 +177,9 @@ export default function InvestPage() {
 
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
-                {filteredFighters.length}名の投資先を表示中
+                Showing {filteredFighters.length} investment opportunities
               </div>
-              <Badge variant="outline">資金調達中のみ表示</Badge>
+              <Badge variant="outline">Fundraising only</Badge>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -192,7 +192,7 @@ export default function InvestPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">
-                    現在、資金調達中の選手はいません
+                    No fighters currently fundraising
                   </p>
                 </CardContent>
               </Card>

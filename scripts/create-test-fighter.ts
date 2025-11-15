@@ -42,7 +42,7 @@ async function main() {
     target: `${PACKAGE_ID}::${MODULE_NAME}::submit_scout_proposal`,
     arguments: [
       tx1.object(PLATFORM_ID),
-      tx1.pure.string('山田剛'), // 選手名
+      tx1.pure.string('Takeshi Yamada'), // Fighter name
       tx1.pure.string('総合格闘技'), // スポーツ
       tx1.pure.string('日本'), // 国
       tx1.pure.u64(25), // 年齢

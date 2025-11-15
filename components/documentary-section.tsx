@@ -9,12 +9,12 @@ export default function DocumentarySection() {
   const documentaries = [
     {
       id: '1',
-      title: '山田剛 - ブラジル修行編 第1話',
-      fighter: '山田剛',
+      title: 'Takeshi Yamada - Brazil Training Arc Episode 1',
+      fighter: 'Takeshi Yamada',
       thumbnail: '/Gemini_Generated_Image_3j4iq63j4iq63j4i.png',
       duration: '24:30',
       status: 'public',
-      description: 'ブラジルの格闘技ジム「Nova União」での過酷な日々を記録。言葉の壁を越え、技術を磨く。',
+      description: 'Documenting the grueling days at Brazil\'s Nova União gym. Overcoming language barriers and honing skills.',
       views: 15420,
       releaseDate: '2025-10-15',
     },
@@ -25,18 +25,18 @@ export default function DocumentarySection() {
       thumbnail: '/Gemini_Generated_Image_7ztmku7ztmku7ztm.png',
       duration: '32:15',
       status: 'premium',
-      description: 'UFCオクタゴンへの挑戦権を手にするまでの、血と汗と涙のドキュメンタリー。',
+      description: 'A documentary of blood, sweat, and tears leading to earning the challenge right to the UFC Octagon.',
       views: 8930,
       releaseDate: '2025-11-01',
     },
     {
       id: '3',
-      title: 'Viktor Volkov - チャンピオンの素顔',
+      title: 'Viktor Volkov - The Champion\'s True Face',
       fighter: 'Viktor Volkov',
       thumbnail: '/Gemini_Generated_Image_b2prmdb2prmdb2pr.png',
       duration: '28:45',
       status: 'locked',
-      description: 'タイトルマッチ直前の緊張と集中。チャンピオンの日常に密着した限定コンテンツ。',
+      description: 'Tension and focus right before the title match. Exclusive content following the champion\'s daily life.',
       views: 0,
       releaseDate: '2025-12-01',
     },
@@ -48,15 +48,15 @@ export default function DocumentarySection() {
         {/* Section Header */}
         <div className="text-center mb-12">
           <Badge className="mb-4" variant="outline">
-            本命ビジネスモデル
+            Core Business Model
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            限定ドキュメンタリー
+            Exclusive Documentaries
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            投資持分NFTを保有する応援者だけが視聴できる、選手の海外修行ドキュメンタリー。
+            Fighter training documentaries abroad, viewable only by supporters holding Investment Share NFTs.
             <br />
-            メディア企業だからこそ実現できる、プロフェッショナルな映像体験。
+            Professional video experiences made possible by our media expertise.
           </p>
         </div>
 
@@ -76,13 +76,13 @@ export default function DocumentarySection() {
                 {/* Status Badge */}
                 <div className="absolute top-4 left-4">
                   {doc.status === 'public' && (
-                    <Badge className="bg-green-500 text-white">無料公開</Badge>
+                    <Badge className="bg-green-500 text-white">Free</Badge>
                   )}
                   {doc.status === 'premium' && (
-                    <Badge className="bg-blue-500 text-white">応援者限定</Badge>
+                    <Badge className="bg-blue-500 text-white">Supporters Only</Badge>
                   )}
                   {doc.status === 'locked' && (
-                    <Badge className="bg-gray-500 text-white">未公開</Badge>
+                    <Badge className="bg-gray-500 text-white">Unreleased</Badge>
                   )}
                 </div>
 
@@ -124,20 +124,20 @@ export default function DocumentarySection() {
                 {doc.status === 'locked' ? (
                   <Button variant="outline" className="w-full" disabled>
                     <Lock className="w-4 h-4 mr-2" />
-                    {doc.releaseDate} 公開予定
+                    Releasing {doc.releaseDate}
                   </Button>
                 ) : doc.status === 'premium' ? (
                   <Button className="w-full" asChild>
                     <Link href={`/documentaries/${doc.id}`}>
                       <Play className="w-4 h-4 mr-2" />
-                      視聴する（要投資NFT）
+                      Watch (NFT Required)
                     </Link>
                   </Button>
                 ) : (
                   <Button className="w-full" asChild>
                     <Link href={`/documentaries/${doc.id}`}>
                       <Play className="w-4 h-4 mr-2" />
-                      視聴する
+                      Watch
                     </Link>
                   </Button>
                 )}
@@ -149,12 +149,12 @@ export default function DocumentarySection() {
         {/* CTA */}
         <div className="text-center">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold mb-4">全コンテンツを視聴するには</h3>
+            <h3 className="text-2xl font-bold mb-4">Access All Content</h3>
             <p className="text-muted-foreground mb-6">
-              選手を応援して投資持分NFTを獲得すると、その選手の限定ドキュメンタリーへのアクセス権が付与されます。
+              Support fighters and earn Investment Share NFTs to gain access to their exclusive documentaries.
             </p>
             <Button size="lg" asChild>
-              <Link href="/login?action=signup">応援者として参加する</Link>
+              <Link href="/login?action=signup">Join as Supporter</Link>
             </Button>
           </div>
         </div>

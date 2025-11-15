@@ -12,24 +12,24 @@ export default function FightersGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            夢を追う選手たち
+            Fighters Chasing Dreams
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            才能はあるが、資金や人脈で壁にぶつかっている選手を応援しよう。<br/>
-            あなたの応援が、彼らの人生を変える。
+            Support talented fighters held back by lack of funding or connections.<br/>
+            Your support can change their lives.
           </p>
         </div>
 
         <Tabs defaultValue="fundraising" className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
             <TabsTrigger value="fundraising">
-              資金調達中 ({fundraisingFighters.length})
+              Fundraising ({fundraisingFighters.length})
             </TabsTrigger>
             <TabsTrigger value="training">
-              修行中 ({trainingFighters.length})
+              In Training ({trainingFighters.length})
             </TabsTrigger>
             <TabsTrigger value="active">
-              活動中 ({activeFighters.length})
+              Active ({activeFighters.length})
             </TabsTrigger>
           </TabsList>
 
@@ -41,7 +41,7 @@ export default function FightersGrid() {
             </div>
             {fundraisingFighters.length === 0 && (
               <p className="text-center text-muted-foreground py-12">
-                現在、資金調達中の選手はいません
+                No fighters currently fundraising
               </p>
             )}
           </TabsContent>
@@ -54,7 +54,7 @@ export default function FightersGrid() {
             </div>
             {trainingFighters.length === 0 && (
               <p className="text-center text-muted-foreground py-12">
-                現在、修行中の選手はいません
+                No fighters currently in training
               </p>
             )}
           </TabsContent>
@@ -67,7 +67,7 @@ export default function FightersGrid() {
             </div>
             {activeFighters.length === 0 && (
               <p className="text-center text-muted-foreground py-12">
-                現在、活動中の選手はいません
+                No active fighters currently
               </p>
             )}
           </TabsContent>

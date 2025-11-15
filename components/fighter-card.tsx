@@ -23,9 +23,9 @@ export function FighterCard({ fighter }: FighterCardProps) {
   
   const fundingPercent = Math.min(100, (fighter.funding.currentAmount / fighter.funding.targetAmount) * 100)
   const statusLabels = {
-    fundraising: '資金調達中',
-    training: '修行中',
-    active: '活動中',
+    fundraising: 'Fundraising',
+    training: 'In Training',
+    active: 'Active',
   }
   const statusColors = {
     fundraising: 'bg-blue-500',
@@ -35,7 +35,7 @@ export function FighterCard({ fighter }: FighterCardProps) {
 
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-primary/20 group">
-      {/* 選手画像エリア - ストーリー性を強調 */}
+      {/* Fighter Image Area - Emphasizing Story */}
       <div className="relative h-56 bg-linear-to-br from-primary/30 via-primary/10 to-background overflow-hidden">
         <Image
           src={fighter.image}
@@ -59,12 +59,12 @@ export function FighterCard({ fighter }: FighterCardProps) {
       </div>
 
       <CardHeader className="pb-3 space-y-3">
-        {/* 基本情報 */}
+        {/* Basic Information */}
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4 text-muted-foreground">
             <span>{fighter.nationality}</span>
             <span>•</span>
-            <span>{fighter.age}歳</span>
+            <span>{fighter.age} y/o</span>
             <span>•</span>
             <span>{fighter.weightClass}</span>
           </div>
@@ -73,7 +73,7 @@ export function FighterCard({ fighter }: FighterCardProps) {
           </Badge>
         </div>
 
-        {/* 目標 - 応援したくなる要素 */}
+        {/* Goal - Inspiring Support */}
         <div className="flex gap-2 items-start bg-muted/50 p-3 rounded-lg">
           <Target className="h-4 w-4 text-primary mt-0.5 shrink-0" />
           <p className="text-sm leading-relaxed">{fighter.goal}</p>
@@ -81,11 +81,11 @@ export function FighterCard({ fighter }: FighterCardProps) {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* 資金調達進捗 */}
+        {/* Fundraising Progress */}
         <div className="space-y-2">
           <div className="flex justify-between items-end">
             <div>
-              <p className="text-xs text-muted-foreground">調達進捗</p>
+              <p className="text-xs text-muted-foreground">Funding Progress</p>
               <p className="text-lg font-bold">
                 ${fighter.funding.currentAmount.toLocaleString()}
                 <span className="text-sm font-normal text-muted-foreground ml-1">
@@ -107,23 +107,23 @@ export function FighterCard({ fighter }: FighterCardProps) {
           </div>
         </div>
 
-        {/* 投資家数 */}
+        {/* Number of Investors */}
         <div className="flex items-center justify-between pt-2 border-t border-border">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
-            <span className="text-sm text-muted-foreground">投資家</span>
+            <span className="text-sm text-muted-foreground">Investors</span>
           </div>
-          <span className="text-lg font-semibold">{fighter.funding.investorCount}人</span>
+          <span className="text-lg font-semibold">{fighter.funding.investorCount}</span>
         </div>
 
-        {/* 投資ボタン */}
+        {/* Invest Button */}
         <Button 
           onClick={() => setIsModalOpen(true)}
           className="w-full group-hover:shadow-lg transition-all" 
           size="lg"
         >
           <Heart className="h-4 w-4 mr-2" />
-          投資する
+          Invest
         </Button>
       </CardContent>
 

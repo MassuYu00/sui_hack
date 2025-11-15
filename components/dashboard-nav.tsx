@@ -20,7 +20,7 @@ export default function DashboardNav({ title, backUrl = '/dashboard' }: Dashboar
             <Button variant="ghost" size="sm" asChild>
               <Link href={backUrl} className="flex items-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">戻る</span>
+                <span className="hidden sm:inline">Back</span>
               </Link>
             </Button>
             <h1 className="text-xl font-bold">{title}</h1>

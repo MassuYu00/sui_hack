@@ -24,7 +24,7 @@ import {
 const mockFighters = [
   {
     id: 'fighter-001',
-    nameJa: '山田剛',
+    nameJa: 'Takeshi Yamada',
     name: 'Takeshi Yamada',
     totalInvested: 5000,
     investorCount: 12,

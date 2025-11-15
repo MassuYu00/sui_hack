@@ -45,8 +45,8 @@ export default function DashboardPage() {
                     <Plus className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-semibold">新しい選手を応援</p>
-                    <p className="text-sm text-muted-foreground">応援先を探す</p>
+                    <p className="font-semibold">Support New Fighter</p>
+                    <p className="text-sm text-muted-foreground">Find Fighters</p>
                   </div>
                 </Link>
               </CardContent>
@@ -59,8 +59,8 @@ export default function DashboardPage() {
                     <Target className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
-                    <p className="font-semibold">選手をスカウト</p>
-                    <p className="text-sm text-muted-foreground">有望選手を推薦</p>
+                    <p className="font-semibold">Scout Fighter</p>
+                    <p className="text-sm text-muted-foreground">Recommend Talent</p>
                   </div>
                 </Link>
               </CardContent>
@@ -73,8 +73,8 @@ export default function DashboardPage() {
                     <Trophy className="h-6 w-6 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="font-semibold">マイバッジ</p>
-                    <p className="text-sm text-muted-foreground">SBTコレクション</p>
+                    <p className="font-semibold">My Badges</p>
+                    <p className="text-sm text-muted-foreground">SBT Collection</p>
                   </div>
                 </Link>
               </CardContent>

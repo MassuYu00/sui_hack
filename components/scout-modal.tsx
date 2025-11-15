@@ -40,12 +40,12 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
     e.preventDefault()
 
     if (formData.stakeAmount < minStake || formData.stakeAmount > maxStake) {
-      alert(`ステーク額は${minStake}〜${maxStake} USDsuiの範囲で設定してください`)
+      alert(`Stake amount must be between ${minStake} and ${maxStake} USDsui`)
       return
     }
 
     if (formData.reason.length > 500) {
-      alert('推薦理由は500文字以内で入力してください')
+      alert('Recommendation reason must be 500 characters or less')
       return
     }
 
@@ -53,32 +53,32 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
     setError(null)
 
     try {
-      // サーバーサイドでスカウト提案を提出
-      console.log('🚀 スカウト提案トランザクション開始...')
-      console.log('提案内容:', formData)
+      // Submit scout proposal server-side
+      console.log('🚀 Starting scout proposal transaction...')
+      console.log('Proposal details:', formData)
       
       const result = await submitScoutProposalAction(formData)
 
       if (!result.success) {
-        throw new Error(result.error || 'トランザクションが失敗しました')
+        throw new Error(result.error || 'Transaction failed')
       }
 
-      console.log('✅ 提案送信成功!')
+      console.log('✅ Proposal submitted successfully!')
       console.log('Proposal ID:', result.proposalId)
 
-      // コンテキストに追加
+      // Add to context
       const localProposalId = await addProposal({
         ...formData,
-        proposerAddress: 'mock', // モックから送信
-        proposerName: 'あなた',
+        proposerAddress: 'mock', // Sent from mock
+        proposerName: 'You',
       })
 
       setProposalId(result.proposalId || localProposalId)
       setTxDigest(null)
       setIsSuccess(true)
     } catch (error: any) {
-      console.error('❌ 提案送信失敗:', error)
-      setError(error.message || '推薦の送信に失敗しました。もう一度お試しください。')
+      console.error('❌ Proposal submission failed:', error)
+      setError(error.message || 'Failed to submit recommendation. Please try again.')
     } finally {
       setIsProcessing(false)
     }
@@ -113,10 +113,10 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
                 <CheckCircle2 className="h-12 w-12 text-green-600" />
               </div>
               <DialogTitle className="text-2xl text-center">
-                推薦を送信しました！
+                Recommendation Submitted!
               </DialogTitle>
               <DialogDescription className="text-center">
-                運営チームが審査を行います
+                The team will review your submission
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -126,19 +126,19 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
             <div className="border rounded-lg p-4 bg-gradient-to-br from-primary/5 to-background">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">選手名</span>
+                  <span className="text-sm text-muted-foreground">Fighter Name</span>
                   <span className="font-semibold">{formData.fighterNameJa}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-t">
-                  <span className="text-sm text-muted-foreground">階級</span>
+                  <span className="text-sm text-muted-foreground">Weight Class</span>
                   <span className="font-semibold">{formData.weightClass}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-t">
-                  <span className="text-sm text-muted-foreground">ステーク額</span>
+                  <span className="text-sm text-muted-foreground">Stake Amount</span>
                   <span className="font-semibold">${formData.stakeAmount} USDsui</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-t">
-                  <span className="text-sm text-muted-foreground">推薦ID</span>
+                  <span className="text-sm text-muted-foreground">Proposal ID</span>
                   <span className="font-mono text-xs">{proposalId.slice(0, 16)}...</span>
                 </div>
               </div>
@@ -149,12 +149,12 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               <div className="flex items-start gap-3">
                 <Award className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
                 <div className="text-sm text-blue-900">
-                  <p className="font-semibold mb-1">審査について</p>
-                  <p className="mb-2">運営チームが選手の将来性を評価します。承認されると：</p>
+                  <p className="font-semibold mb-1">Review Process</p>
+                  <p className="mb-2">The team will evaluate the fighter's potential. If approved:</p>
                   <ul className="list-disc list-inside space-y-1">
-                    <li>ステーク額が返却されます</li>
-                    <li>選手の調達成功時に総額の3%を報酬として獲得</li>
-                    <li>Scout Master SBTが発行されます</li>
+                    <li>Your stake will be returned</li>
+                    <li>Earn 3% of total funding when fighter succeeds</li>
+                    <li>Receive a Scout Master SBT</li>
                   </ul>
                 </div>
               </div>
@@ -165,8 +165,8 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
                 <div className="text-sm text-amber-900">
-                  <p className="font-semibold mb-1">注意事項</p>
-                  <p>不承認の場合、ステーク額は返却されません。質の高い推薦をお願いします。</p>
+                  <p className="font-semibold mb-1">Important Notice</p>
+                  <p>If rejected, your stake will not be returned. Please submit high-quality recommendations.</p>
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
 
           <DialogFooter className="gap-2">
             <Button onClick={handleClose} variant="outline" className="flex-1">
-              閉じる
+              Close
             </Button>
             {txDigest && (
               <Button
@@ -185,7 +185,7 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
                 className="flex-1"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                トランザクションを表示
+                View Transaction
               </Button>
             )}
           </DialogFooter>
@@ -199,16 +199,16 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>新しい選手を推薦</DialogTitle>
+          <DialogTitle>Recommend a Fighter</DialogTitle>
           <DialogDescription>
-            才能ある選手の情報を入力してください。運営チームが審査します。
+            Enter information about a talented fighter. The team will review your submission.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="fighterName">選手名（英語）*</Label>
+              <Label htmlFor="fighterName">Fighter Name (English)*</Label>
               <Input
                 id="fighterName"
                 value={formData.fighterName}
@@ -219,12 +219,12 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               />
             </div>
             <div>
-              <Label htmlFor="fighterNameJa">選手名（日本語）*</Label>
+              <Label htmlFor="fighterNameJa">Fighter Name (Local)*</Label>
               <Input
                 id="fighterNameJa"
                 value={formData.fighterNameJa}
                 onChange={(e) => setFormData({ ...formData, fighterNameJa: e.target.value })}
-                placeholder="山田剛"
+                placeholder="Takeshi Yamada"
                 required
                 disabled={isProcessing}
               />
@@ -233,29 +233,29 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="nationality">国籍*</Label>
+              <Label htmlFor="nationality">Nationality*</Label>
               <Input
                 id="nationality"
                 value={formData.nationality}
                 onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                placeholder="日本"
+                placeholder="Japan"
                 required
                 disabled={isProcessing}
               />
             </div>
             <div>
-              <Label htmlFor="weightClass">階級*</Label>
+              <Label htmlFor="weightClass">Weight Class*</Label>
               <Input
                 id="weightClass"
                 value={formData.weightClass}
                 onChange={(e) => setFormData({ ...formData, weightClass: e.target.value })}
-                placeholder="フェザー級"
+                placeholder="Featherweight"
                 required
                 disabled={isProcessing}
               />
             </div>
             <div>
-              <Label htmlFor="currentRecord">戦績*</Label>
+              <Label htmlFor="currentRecord">Record*</Label>
               <Input
                 id="currentRecord"
                 value={formData.currentRecord}
@@ -268,12 +268,12 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
           </div>
 
           <div>
-            <Label htmlFor="reason">推薦理由*</Label>
+            <Label htmlFor="reason">Recommendation Reason*</Label>
             <textarea
               id="reason"
               value={formData.reason}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-              placeholder="この選手の才能や将来性について、具体的に説明してください..."
+              placeholder="Describe this fighter's talent and potential in detail..."
               className="w-full min-h-32 px-3 py-2 border border-input rounded-md"
               maxLength={500}
               required
@@ -283,13 +283,13 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               <p className={`text-xs ${
                 formData.reason.length > 450 ? 'text-amber-600 font-medium' : 'text-muted-foreground'
               }`}>
-                {formData.reason.length}/500文字
+                {formData.reason.length}/500 characters
               </p>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="videoUrl">試合動画URL（任意）</Label>
+            <Label htmlFor="videoUrl">Fight Video URL (Optional)</Label>
             <Input
               id="videoUrl"
               type="url"
@@ -301,7 +301,7 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
           </div>
 
           <div>
-            <Label htmlFor="stakeAmount">ステーク額（USDsui）*</Label>
+            <Label htmlFor="stakeAmount">Stake Amount (USDsui)*</Label>
             <Input
               id="stakeAmount"
               type="number"
@@ -313,15 +313,15 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               disabled={isProcessing}
             />
             <p className="text-sm text-muted-foreground mt-1">
-              最低{minStake} USDsui。推薦が承認されれば返却され、選手の調達成功時に3%の報酬を獲得できます。
+              Minimum {minStake} USDsui. If approved, stake is returned and you earn 3% when fighter succeeds.
             </p>
           </div>
 
-          {/* エラー表示 */}
+          {/* Error display */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
               <p className="text-xs text-red-900">
-                <strong>エラー:</strong> {error}
+                <strong>Error:</strong> {error}
               </p>
             </div>
           )}
@@ -333,7 +333,7 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               onClick={handleClose}
               disabled={isProcessing}
             >
-              キャンセル
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -343,10 +343,10 @@ export function ScoutModal({ isOpen, onClose }: ScoutModalProps) {
               {isProcessing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  送信中...
+                  Submitting...
                 </>
               ) : (
-                '推薦を送信'
+                'Submit Recommendation'
               )}
             </Button>
           </DialogFooter>

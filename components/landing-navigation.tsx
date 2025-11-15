@@ -10,16 +10,16 @@ export default function LandingNavigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
+            <span className="font-bold text-lg text-foreground hidden sm:inline">
+              FIGHTER'S RISING DAO
+            </span>
             <div className="w-8 h-8 rounded-lg overflow-hidden">
               <img 
                 src="/Gemini_Generated_Image_4fla5q4fla5q4fla.png" 
-                alt="FIGHTER'S RISING" 
+                alt="FIGHTER'S RISING DAO" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="font-bold text-lg text-foreground hidden sm:inline">
-              FIGHTER'S RISING
-            </span>
           </Link>
 
           {/* CTA Buttons only */}

@@ -29,7 +29,7 @@ export function InvestmentProvider({ children }: { children: ReactNode }) {
       id: 'nft-001',
       fighterId: 'fighter-001',
       fighterName: 'Takeshi "Thunder" Yamada',
-      fighterNameJa: '山田 剛',
+      fighterNameJa: 'Takeshi Yamada',
       fighterImage: '/Gemini_Generated_Image_3j4iq63j4iq63j4i.png',
       investorAddress: '0x...',
       amount: 500,

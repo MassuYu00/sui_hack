@@ -51,11 +51,11 @@ export default function ScoutPage() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending':
-        return '審査中'
+        return 'Under Review'
       case 'approved':
-        return '承認済み'
+        return 'Approved'
       case 'rejected':
-        return '不採用'
+        return 'Rejected'
       default:
         return status
     }
@@ -63,16 +63,16 @@ export default function ScoutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNav title="スカウト推薦" />
+      <DashboardNav title="Scout Recommendations" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold mb-4">スカウト推薦</h1>
+              <h1 className="text-4xl font-bold mb-4">Scout Recommendations</h1>
               <p className="text-xl text-muted-foreground">
-                有望な選手を発掘し、DAOに推薦しましょう。
+                Discover promising fighters and recommend them to the DAO.
               </p>
             </div>
             <Button
@@ -80,7 +80,7 @@ export default function ScoutPage() {
               onClick={() => setShowModal(true)}
               className="bg-primary hover:bg-accent"
             >
-              + 選手を推薦する
+              + Recommend Fighter
             </Button>
           </div>
 
@@ -94,11 +94,11 @@ export default function ScoutPage() {
                   </div>
                   <div>
                     <div className="text-2xl font-bold">3%</div>
-                    <div className="text-sm text-muted-foreground">スカウト報酬</div>
+                    <div className="text-sm text-muted-foreground">Scout Reward</div>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-3">
-                  推薦選手が調達成功時、総額の3%を受領
+                  Receive 3% of total funding when recommended fighter succeeds
                 </p>
               </CardContent>
             </Card>
@@ -111,11 +111,11 @@ export default function ScoutPage() {
                   </div>
                   <div>
                     <div className="text-2xl font-bold">${totalStaked}</div>
-                    <div className="text-sm text-muted-foreground">ステーク中</div>
+                    <div className="text-sm text-muted-foreground">Staked</div>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-3">
-                  あなたが現在ステークしている合計額
+                  Total amount you currently have staked
                 </p>
               </CardContent>
             </Card>
@@ -128,11 +128,11 @@ export default function ScoutPage() {
                   </div>
                   <div>
                     <div className="text-2xl font-bold">{pendingCount}</div>
-                    <div className="text-sm text-muted-foreground">審査中</div>
+                    <div className="text-sm text-muted-foreground">Under Review</div>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-3">
-                  運営チームが審査中の推薦
+                  Recommendations being reviewed by the team
                 </p>
               </CardContent>
             </Card>
@@ -145,11 +145,11 @@ export default function ScoutPage() {
                   </div>
                   <div>
                     <div className="text-2xl font-bold">{approvedCount}</div>
-                    <div className="text-sm text-muted-foreground">承認済み</div>
+                    <div className="text-sm text-muted-foreground">Approved</div>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-3">
-                  全体で承認された推薦数
+                  Total number of approved recommendations
                 </p>
               </CardContent>
             </Card>
@@ -161,7 +161,7 @@ export default function ScoutPage() {
 
         {/* Proposals List */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">最近の推薦</h2>
+          <h2 className="text-2xl font-bold mb-6">Recent Recommendations</h2>
           <div className="space-y-4">
             {proposals.map((proposal) => (
               <Card key={proposal.id} className="hover:shadow-md transition-shadow">
@@ -179,15 +179,15 @@ export default function ScoutPage() {
                       </div>
                       <p className="text-muted-foreground mb-4">{proposal.reason}</p>
                       <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <span>推薦者: {proposal.proposerName}</span>
-                        <span>ステーク: {proposal.stakeAmount} USDsui</span>
+                        <span>Proposer: {proposal.proposerName}</span>
+                        <span>Stake: {proposal.stakeAmount} USDsui</span>
                         <span>
-                          提出日: {new Date(proposal.submittedAt).toLocaleDateString('ja-JP')}
+                          Submitted: {new Date(proposal.submittedAt).toLocaleDateString('en-US')}
                         </span>
                       </div>
                       {proposal.reviewComment && (
                         <div className="mt-4 p-3 bg-muted rounded-lg">
-                          <p className="text-sm font-medium mb-1">運営からのコメント:</p>
+                          <p className="text-sm font-medium mb-1">Team Comment:</p>
                           <p className="text-sm text-muted-foreground">{proposal.reviewComment}</p>
                         </div>
                       )}
